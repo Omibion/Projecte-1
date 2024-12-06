@@ -25,7 +25,7 @@ public class EquipsConsulta_JPanel extends JPanel {
         setLayout(new BorderLayout());
 
     
-        taulaEquips = new JTable(5, 3);
+        taulaEquips = new JTable(5, 5);
         CreaEquips = new JButton("Crear Equip");
         EditaEquip = new JButton("Editar Equip");
         BorraEquip = new JButton("Borrar Equip");
@@ -41,6 +41,4 @@ public class EquipsConsulta_JPanel extends JPanel {
         topPanel.add(Categoria, BorderLayout.EAST);
         add(topPanel, BorderLayout.NORTH);
     }
-
-   
 }
