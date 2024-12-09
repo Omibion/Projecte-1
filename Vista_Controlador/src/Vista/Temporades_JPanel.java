@@ -1,60 +1,54 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Vista;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTable;
+import java.awt.*;
+import javax.swing.*;
 
-/**
- *
- * @author isard
- */
-public class Temporades_JPanel extends JPanel{
+public class Temporades_JPanel extends JPanel {
     JLabel text;
-    JComboBox anyini;
     JTable taula;
     JButton afegir;
     JButton esborrar;
 
     public Temporades_JPanel() {
-        JPanel jp = new JPanel();
-        jp.setLayout(new GridBagLayout());
+        this.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        text =  new JLabel("Afegir i eliminar temporades:");
+        gbc.insets = new Insets(10, 10, 10, 10); // Margen consistente
+        gbc.fill = GridBagConstraints.BOTH;
+
+        // Etiqueta
+        text = new JLabel("Afegir i eliminar temporades:");
+        text.setFont(new Font("Arial", Font.BOLD, 16));
         gbc.gridx = 0;
-        gbc.gridy=0;
-        gbc.gridheight=2;
-        jp.add(text);
-        
-        anyini = new JComboBox();
-        gbc.gridx=0;
-        gbc.gridy=1;
-        jp.add(anyini);
-        
-        taula = new JTable();
-        gbc.gridx= 0;
-        gbc.gridy=2;
-        gbc.gridheight=2;
-        jp.add(taula);
-        
-        afegir=new JButton("Afegir temporada");
-        gbc.gridx=1;
-        gbc.gridy=1;
-        jp.add(afegir);
-        
-        esborrar=new JButton("Eliminar temporada");
-        gbc.gridx=1;
-        gbc.gridy=2;
-        jp.add(esborrar);
-        //Falta cargar los datos de la taula, ya seguire el lunes, pos ya es viernes, hahahahaha, no he hecho na...
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.1;
+        this.add(text, gbc);
+
+        // Tabla
+        taula = new JTable(5, 3);
+        JScrollPane scroll = new JScrollPane(taula);
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.8;
+        this.add(scroll, gbc);
+
+        // Panel para los botones en la parte inferior
+        JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 10, 0)); // Usamos GridLayout para alinear los botones
+        afegir = new JButton("Afegir temporada");
+        esborrar = new JButton("Eliminar temporada");
+
+        bottomPanel.add(afegir);
+        bottomPanel.add(esborrar);
+
+        // Añadimos el panel de botones en la parte inferior
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.1;
+        this.add(bottomPanel, gbc);
     }
-    
-    
 }
