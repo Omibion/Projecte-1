@@ -13,13 +13,9 @@ public class EquipsConsulta_JPanel extends JPanel {
 
     public EquipsConsulta_JPanel() {
         setLayout(new BorderLayout(10, 10));
-
-        // Tabla con scroll
         taulaEquips = new JTable(10, 5);
         JScrollPane scroll = new JScrollPane(taulaEquips);
         add(scroll, BorderLayout.CENTER);
-
-        // Panel superior con filtros
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         Temporada = new JComboBox<>(new String[]{"2021", "2022", "2023", "2024"});
         Categoria = new JComboBox<>(new String[]{"Senior", "Junior", "Infantil"});
@@ -28,8 +24,6 @@ public class EquipsConsulta_JPanel extends JPanel {
         topPanel.add(new JLabel("Categoria:"));
         topPanel.add(Categoria);
         add(topPanel, BorderLayout.NORTH);
-
-        // Panel inferior con botones
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         CreaEquips = new JButton("Crear Equip");
         EditaEquip = new JButton("Editar Equip");

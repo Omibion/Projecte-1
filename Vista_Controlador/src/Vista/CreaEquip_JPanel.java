@@ -12,14 +12,12 @@ public class CreaEquip_JPanel extends JPanel {
     ButtonGroup grup;
 
     public CreaEquip_JPanel() {
-        // Configuración del layout
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(15, 15, 15, 15); // Márgenes alrededor de cada componente
         gbc.fill = GridBagConstraints.BOTH; // Expansión en ambas direcciones
         gbc.weightx = 1.0; // Expansión horizontal por defecto
 
-        // Título
         titol = new JLabel("Crear Equipo");
         titol.setFont(new Font("Arial", Font.BOLD, 24)); // Fuente más grande
         titol.setHorizontalAlignment(SwingConstants.CENTER);
@@ -29,7 +27,6 @@ public class CreaEquip_JPanel extends JPanel {
         gbc.weighty = 0.1; // Deja espacio proporcional al título
         add(titol, gbc);
 
-        // Nombre
         nom = new JLabel("Nombre:");
         nom.setFont(new Font("Arial", Font.PLAIN, 18));
         gbc.gridx = 0;
@@ -44,7 +41,6 @@ public class CreaEquip_JPanel extends JPanel {
         gbc.gridy = 1;
         add(e_nom, gbc);
 
-        // Temporada
         temporada = new JLabel("Temporada:");
         temporada.setFont(new Font("Arial", Font.PLAIN, 18));
         gbc.gridx = 0;
@@ -57,7 +53,6 @@ public class CreaEquip_JPanel extends JPanel {
         gbc.gridy = 2;
         add(temporades, gbc);
 
-        // Categoría
         categoria = new JLabel("Categoría:");
         categoria.setFont(new Font("Arial", Font.PLAIN, 18));
         gbc.gridx = 0;
@@ -69,8 +64,6 @@ public class CreaEquip_JPanel extends JPanel {
         gbc.gridx = 1;
         gbc.gridy = 3;
         add(categories, gbc);
-
-        // Radios de género
         masc = new JRadioButton("Masculino");
         fem = new JRadioButton("Femenino");
         mix = new JRadioButton("Mixto");
@@ -92,34 +85,27 @@ public class CreaEquip_JPanel extends JPanel {
         gbc.gridwidth = 2;
         add(radioPanel, gbc);
 
-        // Botones
         guarda = new JButton("Guardar");
         torna = new JButton("Volver");
         guarda.setFont(new Font("Arial", Font.BOLD, 16));
         torna.setFont(new Font("Arial", Font.BOLD, 16));
 
-        // Panel de botones con GridBagLayout para colocar los botones en las esquinas
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         GridBagConstraints buttonGbc = new GridBagConstraints();
-        buttonGbc.insets = new Insets(10, 10, 10, 10); // Márgenes para los botones
+        buttonGbc.insets = new Insets(10, 10, 10, 10);
 
-        // Botón "Guardar" en la esquina inferior izquierda
         buttonGbc.gridx = 0;
         buttonGbc.gridy = 0;
         buttonGbc.anchor = GridBagConstraints.SOUTHWEST;
         buttonPanel.add(guarda, buttonGbc);
-
-        // Botón "Volver" en la esquina inferior derecha
         buttonGbc.gridx = 1;
         buttonGbc.gridy = 0;
         buttonGbc.anchor = GridBagConstraints.SOUTHEAST;
         buttonPanel.add(torna, buttonGbc);
-
-        // Añadir el panel de botones al GridBagLayout principal
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.gridwidth = 2;
-        gbc.weighty = 0.3; // Espacio restante para los botones
+        gbc.weighty = 0.3; 
         add(buttonPanel, gbc);
     }
 }
