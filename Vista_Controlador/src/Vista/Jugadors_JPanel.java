@@ -14,7 +14,6 @@ public class Jugadors_JPanel extends JPanel {
     public Jugadors_JPanel() {
         setLayout(new BorderLayout(10, 10));
 
-        // Panel superior con NIF y botón "Cerca"
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
         JLabel nifLabel = new JLabel("NIF");
         nifField = new JTextField(15);
@@ -23,9 +22,7 @@ public class Jugadors_JPanel extends JPanel {
         topPanel.add(nifField);
         topPanel.add(cercaButton);
         add(topPanel, BorderLayout.NORTH);
-
-        // Tabla de jugadores
-        String[] columnNames = {"Nom", "NIF", "Data de naixement", "Seleccionar"};
+        String[] columnNames = {"Nom", "NIF", "Data de naixement","Categoria", "Seleccionar"};
         Object[][] data = {}; 
         DefaultTableModel model = new DefaultTableModel(data, columnNames) {
             @Override
@@ -40,7 +37,7 @@ public class Jugadors_JPanel extends JPanel {
         };
 
         taulaJugadors = new JTable(model);
-        taulaJugadors.setRowHeight(30); // Altura de las filas para acomodar los RadioButtons
+        taulaJugadors.setRowHeight(30);
         taulaJugadors.getColumnModel().getColumn(3).setCellRenderer(new RadioButtonRenderer());
         taulaJugadors.getColumnModel().getColumn(3).setCellEditor(new RadioButtonEditor(new JRadioButton()));
 

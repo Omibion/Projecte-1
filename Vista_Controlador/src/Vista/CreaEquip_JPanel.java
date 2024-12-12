@@ -14,17 +14,17 @@ public class CreaEquip_JPanel extends JPanel {
     public CreaEquip_JPanel() {
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 15, 15, 15); // Márgenes alrededor de cada componente
-        gbc.fill = GridBagConstraints.BOTH; // Expansión en ambas direcciones
-        gbc.weightx = 1.0; // Expansión horizontal por defecto
+        gbc.insets = new Insets(15, 15, 15, 15);
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0; 
 
-        titol = new JLabel("Crear Equipo");
-        titol.setFont(new Font("Arial", Font.BOLD, 24)); // Fuente más grande
+        titol = new JLabel("Crea/Edita Equip");
+       // titol.setFont(new Font("Arial", Font.BOLD, 24));
         titol.setHorizontalAlignment(SwingConstants.CENTER);
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridwidth = 2;
-        gbc.weighty = 0.1; // Deja espacio proporcional al título
+        gbc.weighty = 0.1; 
         add(titol, gbc);
 
         nom = new JLabel("Nombre:");

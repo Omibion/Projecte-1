@@ -45,7 +45,7 @@ public class FramePrincipal extends JFrame {
         menu.add(jugadors);
         this.add(menu, BorderLayout.WEST);
         panelCentro = new JPanel();
-        panelCentro.setLayout(new BorderLayout()); // Diseño flexible para el centro
+        panelCentro.setLayout(new BorderLayout()); 
         this.add(panelCentro, BorderLayout.CENTER);
     }
 
