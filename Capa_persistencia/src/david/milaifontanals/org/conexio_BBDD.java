@@ -50,7 +50,7 @@ public class conexio_BBDD implements Interficie_persistencia{
             private PreparedStatement psEliminarMembre;
             private PreparedStatement psRepetit;
             private PreparedStatement psEliminarJugador;
-            
+            private PreparedStatement psCarregarJugadors;
             
             
         public conexio_BBDD() throws gestorEquipsException{
@@ -745,11 +745,57 @@ Temporada temp= hmtemp.get(id);
                 }    
     }
 
-   
-
-   
-
-   
-   
-    
+   public HashMap carregar_categories() throws gestorEquipsException{
+       if(!(hmcat.size()==6)){//6 perque només hi han 6 categories i aixo ho marca la federació, no el club.
+           hmcat.clear();
+           for (int i = 0; i < 6; i++) {
+           try {
+               obtenir_categoria(i);//Ja se que es una güarrada, pero es que ja tenia aquest metode fet.
+           } catch (gestorEquipsException ex) {
+               throw new gestorEquipsException("Error en carregar categories",ex);
+           }
+           
+       } return hmcat;}
+       else{
+           return hmcat;
+       }
+   } 
+  public HashMap carregar_jugador() throws gestorEquipsException{
+      hmjug.clear();
+        
+        if(psObtenirJugador==null){
+            try {
+                psObtenirJugador=con.prepareStatement("select * from jugador ");
+            } catch (SQLException ex) {
+                throw new gestorEquipsException("Error en preparar el statement per recuperar jugadors",ex);
+            }
+            try {
+                 ResultSet rs = psObtenirJugador.executeQuery();
+                 while(rs.next()){
+                int idj=rs.getInt("id");
+                String nom=rs.getString("nom");
+                String cognom = rs.getString("cognoms");
+                String sexe=rs.getString("Sexe");
+                Date dataNaix=rs.getDate("data_naix");
+                String dni=rs.getString("idLegal");
+                String iban = rs.getString("IBAN");
+                Date anyRev=rs.getDate("ANY_FI_REVISIÓ_MÉDICA");
+                String Adreça=rs.getString("adreça");
+                String url = rs.getString("foto");
+                
+                char sex= sexe.charAt(0);
+               Jugador jug=new Jugador(idj,nom,cognom,sex,dataNaix,dni,iban,anyRev,Adreça,url);
+               hmjug.put(idj, jug);
+          
+                 }
+            } catch (SQLException ex) {
+                throw new gestorEquipsException("Error en executar la query per carregar categoria",ex);
+            }
+           
+            
+        }
+        return hmjug;
+    }
+                
 }
+

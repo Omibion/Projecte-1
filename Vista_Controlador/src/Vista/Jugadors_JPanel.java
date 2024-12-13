@@ -4,13 +4,16 @@ import david.milaifontanals.org.Jugador;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.HashMap;
 import javax.swing.table.TableCellRenderer;
+import java.util.List;
 
 public class Jugadors_JPanel extends JPanel {
     private JTable taulaJugadors;
     private JButton consultaSeleccionat, esborraSeleccionat, afegirJugador, exportarJugadors;
     private JTextField nifField;
     private JButton cercaButton;
+    private DefaultTableModel model;
 
     public Jugadors_JPanel() {
         setLayout(new BorderLayout(10, 10));
@@ -23,25 +26,10 @@ public class Jugadors_JPanel extends JPanel {
         topPanel.add(nifField);
         topPanel.add(cercaButton);
         add(topPanel, BorderLayout.NORTH);
-        String[] columnNames = {"Nom", "NIF", "Data de naixement","Categoria", "Seleccionar"};
-        Object[][] data = {}; 
-        DefaultTableModel model = new DefaultTableModel(data, columnNames) {
-            @Override
-            public Class<?> getColumnClass(int column) {
-                return column == 3 ? JRadioButton.class : String.class;
-            }
-
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return column == 3;
-            }
-        };
-
+        String[] columnNames = {"Nom", "NIF", "Data de naixement","Categoria"};
+        Object[][] data = {};       
         taulaJugadors = new JTable(model);
         taulaJugadors.setRowHeight(30);
-        taulaJugadors.getColumnModel().getColumn(3).setCellRenderer(new RadioButtonRenderer());
-        taulaJugadors.getColumnModel().getColumn(3).setCellEditor(new RadioButtonEditor(new JRadioButton()));
-
         JScrollPane scrollPane = new JScrollPane(taulaJugadors);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -62,12 +50,12 @@ public class Jugadors_JPanel extends JPanel {
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
-   
-     public void actualizarTabla(List<Jugador> jugadores) {
-        model.setRowCount(0);  // Limpiar la tabla antes de llenarla
-        for (Jugador jugador : jugadores) {
-            Object[] row = {jugador.getNomJugador(), jugador.getIdLegal(), jugador.getDataNaix(), jugador.getCategoria()};
-            model.addRow(row);
-        }
+  
+    public void actualizarTabla(HashMap<Integer, Jugador> jugadores) {
+        model.setRowCount(0);  
+         jugadores.forEach((key, jugador) -> {
+        Object[] row = {jugador.getNomJugador(), jugador.getIdLegal(), jugador.getDataNaix(), jugador.getCat()};
+        model.addRow(row);
+    });
     }
 }

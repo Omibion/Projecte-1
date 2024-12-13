@@ -4,7 +4,9 @@
  */
 package david.milaifontanals.org;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -34,6 +36,7 @@ public class Jugador {
         this.anyFiRevisioMedica = anyFiRevisioMedica;
         this.adreça = adreça;
         this.foto = foto;
+        
         
     }
 
@@ -128,6 +131,37 @@ public class Jugador {
     public void setFoto(String foto) {
         this.foto = foto;
     }
-    
-    
+
+    public Categoria getCat() {
+        return cat;
+    }
+
+    public void setCat(Categoria cat) {
+        this.cat = cat;
+    }
+    public int calcularEdad(Date fechaNacimiento) {
+    Calendar fechaActual = Calendar.getInstance();
+    Calendar fechaNac = Calendar.getInstance();
+    fechaNac.setTime(fechaNacimiento);
+
+    int edad = fechaActual.get(Calendar.YEAR) - fechaNac.get(Calendar.YEAR);
+    if (fechaActual.get(Calendar.DAY_OF_YEAR) < fechaNac.get(Calendar.DAY_OF_YEAR)) {
+        edad--;
+    }
+    return edad;
+}
+    public void asignarCategoria(List<Categoria> categorias) {
+    int edad = calcularEdad(this.dataNaix); 
+
+    for (Categoria categoria : categorias) {
+        if (edad >= categoria.getEdatMin() && edad <= categoria.getEdatMax()) {
+            this.cat = categoria; 
+            break;
+        }
+    }
+
+    if (this.cat == null) {
+        System.out.println("No se encontró una categoría para la edad: " + edad);
+    }
+}
 }
