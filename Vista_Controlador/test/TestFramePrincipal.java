@@ -25,7 +25,7 @@ public class TestFramePrincipal {
         SwingUtilities.invokeLater(() -> {
             // Crear la ventana principal
             FramePrincipal frame = new FramePrincipal();
-
+            frame.setResizable(false);
             // Crear paneles para mostrar
             JPanel panelTemporades = new Temporades_JPanel();
             JPanel panelEquips = new EquipsConsulta_JPanel();
@@ -43,13 +43,13 @@ public class TestFramePrincipal {
             panelCentro.add(panelJugadors, "Jugadors");
             panelCentro.add(panelficha, "Categoria");
 
-            // Configurar las acciones de los botones para cambiar de panel
+          
             frame.temp.addActionListener((ActionEvent e) -> cardLayout.show(panelCentro, "Temporades"));
             frame.equip.addActionListener((ActionEvent e) -> cardLayout.show(panelCentro, "Equips"));
             frame.jugadors.addActionListener((ActionEvent e) -> cardLayout.show(panelCentro, "Jugadors"));
             frame.cat.addActionListener((ActionEvent e) -> cardLayout.show(panelCentro, "Categoria")); // Cambia a Categoria
 
-            // Mostrar el frame
+            
             frame.setVisible(true);
         });
     }

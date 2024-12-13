@@ -19,7 +19,7 @@ public class CreaEquip_JPanel extends JPanel {
         gbc.weightx = 1.0; 
 
         titol = new JLabel("Crea/Edita Equip");
-       // titol.setFont(new Font("Arial", Font.BOLD, 24));
+        titol.setFont(new Font("Arial", Font.BOLD, 16));
         titol.setHorizontalAlignment(SwingConstants.CENTER);
         gbc.gridx = 0;
         gbc.gridy = 0;

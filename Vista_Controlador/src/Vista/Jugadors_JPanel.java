@@ -1,5 +1,6 @@
 package Vista;
 
+import david.milaifontanals.org.Jugador;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -61,43 +62,12 @@ public class Jugadors_JPanel extends JPanel {
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    static class RadioButtonRenderer extends JRadioButton implements TableCellRenderer {
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            setSelected(value != null && (boolean) value);
-            return this;
-        }
-    }
-
-    static class RadioButtonEditor extends DefaultCellEditor {
-        private final JRadioButton radioButton;
-
-        public RadioButtonEditor(JRadioButton radioButton) {
-            super(new JCheckBox());
-            this.radioButton = radioButton;
-            this.radioButton.setHorizontalAlignment(SwingConstants.CENTER);
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            ButtonGroup buttonGroup = getButtonGroupForTable(table, column);
-            buttonGroup.add(radioButton);
-            radioButton.setSelected(value != null && (boolean) value);
-            return radioButton;
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return radioButton.isSelected();
-        }
-
-        private ButtonGroup getButtonGroupForTable(JTable table, int column) {
-            ButtonGroup buttonGroup = new ButtonGroup();
-            for (int i = 0; i < table.getRowCount(); i++) {
-                JRadioButton button = new JRadioButton();
-                buttonGroup.add(button);
-            }
-            return buttonGroup;
+   
+     public void actualizarTabla(List<Jugador> jugadores) {
+        model.setRowCount(0);  // Limpiar la tabla antes de llenarla
+        for (Jugador jugador : jugadores) {
+            Object[] row = {jugador.getNomJugador(), jugador.getIdLegal(), jugador.getDataNaix(), jugador.getCategoria()};
+            model.addRow(row);
         }
     }
 }

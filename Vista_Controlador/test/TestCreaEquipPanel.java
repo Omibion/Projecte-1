@@ -6,6 +6,7 @@ public class TestCreaEquipPanel {
     public static void main(String[] args) {
 
         JFrame frame = new JFrame("Test del CreaEquip_JPanel");
+        
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     
         CreaEquip_JPanel panel = new CreaEquip_JPanel();

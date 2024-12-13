@@ -21,6 +21,7 @@ public class Jugador {
     Date anyFiRevisioMedica;
     String adreça;
     String foto;
+    Categoria cat;
 
     public Jugador(int id, String nom, String cognoms, char sexe, Date dataNaix, String idLegal, String iban, Date anyFiRevisioMedica, String adreça, String foto) {
         this.id = id;
@@ -33,6 +34,7 @@ public class Jugador {
         this.anyFiRevisioMedica = anyFiRevisioMedica;
         this.adreça = adreça;
         this.foto = foto;
+        
     }
 
     public Jugador(int id, String nom, String cognoms, char sexe, Date dataNaix, String idLegal, String iban, String adreça, String foto) {
