@@ -15,7 +15,6 @@ import javax.swing.SwingConstants;
 public class FramePrincipal extends JFrame {
     public JButton temp;
     public JButton equip;
-    public JButton cat;
     public JButton jugadors;
     public JPanel panelCentro;
 
@@ -29,18 +28,15 @@ public class FramePrincipal extends JFrame {
         menu.setBackground(new Color(200, 200, 200));
         temp = new JButton("Gestiona Temporades");
         equip = new JButton("Gestiona Équips");
-        cat = new JButton("Gestiona Categories");
         jugadors = new JButton("Gestiona Jugadors");
         estiloBoton(temp);
         estiloBoton(equip);
-        estiloBoton(cat);
         estiloBoton(jugadors);
-        menu.add(Box.createVerticalStrut(30));
-        menu.add(temp);
-        menu.add(Box.createVerticalStrut(30));
+         menu.add(Box.createVerticalStrut(30));
         menu.add(equip);
         menu.add(Box.createVerticalStrut(30));
-        menu.add(cat);
+        menu.add(temp);
+           
         menu.add(Box.createVerticalStrut(30));
         menu.add(jugadors);
         this.add(menu, BorderLayout.WEST);

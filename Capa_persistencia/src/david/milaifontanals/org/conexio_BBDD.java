@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
 /**
  *
@@ -51,6 +52,7 @@ public class conexio_BBDD implements Interficie_persistencia{
             private PreparedStatement psRepetit;
             private PreparedStatement psEliminarJugador;
             private PreparedStatement psCarregarJugadors;
+            private PreparedStatement psCarregarTemporades;
             
             
         public conexio_BBDD() throws gestorEquipsException{
@@ -69,7 +71,7 @@ public class conexio_BBDD implements Interficie_persistencia{
              con.setAutoCommit(false);
              pr.close();
         } catch (FileNotFoundException ex) {
-            throw new gestorEquipsException("No s'ha pogut obrir el fitxer "+nomFitxer,ex);
+            throw new gestorEquipsException("No s'ha pogut obrir el fitxer "+nomFitxer+"en el directori"+System.getProperty("user.dir"),ex);
         } catch (IOException ex) {
             throw new gestorEquipsException("No s'ha pogut carregar la informació del fitxer "+nomFitxer,ex);
         } catch (SQLException ex) {
@@ -77,7 +79,38 @@ public class conexio_BBDD implements Interficie_persistencia{
         }
        
     }
-
+    @Override
+public String encriptar_contrasenya(String contrasenya) throws gestorEquipsException{
+    String encriptat = null;
+    try {
+        
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        
+        
+        byte[] bytes = md.digest(contrasenya.getBytes());
+        
+       
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : bytes) {
+            
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        
+      
+        encriptat = hexString.toString();
+        
+    } catch (NoSuchAlgorithmException ex) {
+        try {
+            throw new gestorEquipsException("Error al encriptar la contraseña", ex);
+        } catch (gestorEquipsException ex1) {
+            Logger.getLogger(conexio_BBDD.class.getName()).log(Level.SEVERE, null, ex1);//Aixo mho ha fet el netbeans, pero no estic segur perque 
+        }
+    }
+  
+                return encriptat;
+}
       
    @Override
 public boolean afegir_usuari(String nom, String password, String Loggin) throws gestorEquipsException {
@@ -226,34 +259,31 @@ public boolean afegir_usuari(String nom, String password, String Loggin) throws 
         return true;
     }
 
-    @Override
-    public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
-        
-        usuari usu= null;
-        if(psObtenirUsuari==null){
-            try {
-                psObtenirUsuari=con.prepareStatement("select * from usuari where login = ?");
-            } catch (SQLException ex) {
-                throw new gestorEquipsException("Error en preparar el statement per recuperar usuaris",ex);
-            }
-            try {
-                psObtenirUsuari.setString(1, loggin);
-                 ResultSet rs = psObtenirUsuari.executeQuery();
-                 if(rs.next()){
+   @Override
+public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
+    usuari usu = null;
+    try {
+        psObtenirUsuari = con.prepareStatement("SELECT * FROM usuari WHERE login = ?");
+        psObtenirUsuari.setString(1, loggin);
+
+        try (ResultSet rs = psObtenirUsuari.executeQuery()) {
+            if (rs.next()) {
                 String nom = rs.getString("nom");
-                String login=rs.getString("login");
-                String psswd=rs.getString("password");
-                usu = new usuari(login,nom,psswd);
+                String login = rs.getString("login");
+                String psswd = rs.getString("password");
+                
+                usu = new usuari(login, nom, psswd);
             }
-                 
-            } catch (SQLException ex) {
-                throw new gestorEquipsException("Error en executar la query per carregar usuari",ex);
-            }
-           
-            
+        } catch (SQLException ex) {
+            throw new gestorEquipsException("Error al ejecutar la consulta para cargar el usuario", ex);
         }
-        return usu;
-    }
+    } catch (SQLException ex) {
+        throw new gestorEquipsException("Error al preparar el statement para recuperar el usuario", ex);
+    } 
+    
+    return usu;
+}
+
 
     @Override
     public Categoria obtenir_categoria(int id) throws gestorEquipsException {
@@ -765,12 +795,12 @@ Temporada temp= hmtemp.get(id);
         
         if(psObtenirJugador==null){
             try {
-                psObtenirJugador=con.prepareStatement("select * from jugador ");
+                psCarregarJugadors=con.prepareStatement("select * from jugador ");
             } catch (SQLException ex) {
                 throw new gestorEquipsException("Error en preparar el statement per recuperar jugadors",ex);
             }
             try {
-                 ResultSet rs = psObtenirJugador.executeQuery();
+                 ResultSet rs = psCarregarJugadors.executeQuery();
                  while(rs.next()){
                 int idj=rs.getInt("id");
                 String nom=rs.getString("nom");
@@ -789,13 +819,40 @@ Temporada temp= hmtemp.get(id);
           
                  }
             } catch (SQLException ex) {
-                throw new gestorEquipsException("Error en executar la query per carregar categoria",ex);
+                throw new gestorEquipsException("Error en executar la query per carregar jugador",ex);
             }
            
             
         }
         return hmjug;
     }
-                
+    public ArrayList<Temporada> carregar_temporades() throws gestorEquipsException {
+    ArrayList<Temporada> listaTemporadas = new ArrayList<>();
+    ResultSet rs = null;
+    
+    if (psCarregarTemporades == null) {
+        try {
+            psCarregarTemporades = con.prepareStatement("SELECT * FROM temporada");
+        } catch (SQLException ex) {
+            throw new gestorEquipsException("Error al crear el prepared statement", ex);
+        }
+    }
+    try {
+        rs = psCarregarTemporades.executeQuery();
+        while (rs.next()) {
+            int idt = rs.getInt("id");
+            Date anyini = rs.getDate("anyini");
+            Date anyfi = rs.getDate("anyfi");
+            System.out.println(""+anyini+anyfi);
+            Temporada temp = new Temporada(idt, anyini, anyfi);
+            listaTemporadas.add(temp);
+        }
+    } catch (SQLException ex) {
+        throw new gestorEquipsException("Error al cargar las temporadas", ex);
+    }
+    
+    return listaTemporadas;
+}
+
 }
 

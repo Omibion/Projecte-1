@@ -1,4 +1,6 @@
 
+import david.milaifontanals.org.Temporada;
+import java.util.ArrayList;
 import david.milaifontanals.org.conexio_BBDD;
 import david.milaifontanals.org.gestorEquipsException;
 import java.util.logging.Level;
@@ -13,21 +15,19 @@ import java.util.logging.Logger;
  *
  * @author isard
  */
-public class Afegir_Usuari {
+public class Carregar_temporades {
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws gestorEquipsException {
         conexio_BBDD cone;
-        
-        try {
-            cone = new conexio_BBDD();
-           
-           cone.afegir_usuari("David", "1234", "admin");
-           cone.conectionClose();
-        } catch (gestorEquipsException ex) {
-            Logger.getLogger(Prova_Connection.class.getName()).log(Level.SEVERE, null, ex);
+        cone = new conexio_BBDD();
+        ArrayList<Temporada> ar = new ArrayList();
+        ar=cone.carregar_temporades();
+        for (Temporada temporada : ar) {
+            System.out.println(""+temporada.toString()); 
+            
         }
     }
     

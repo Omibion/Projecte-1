@@ -47,7 +47,7 @@ public class TestFramePrincipal {
             frame.temp.addActionListener((ActionEvent e) -> cardLayout.show(panelCentro, "Temporades"));
             frame.equip.addActionListener((ActionEvent e) -> cardLayout.show(panelCentro, "Equips"));
             frame.jugadors.addActionListener((ActionEvent e) -> cardLayout.show(panelCentro, "Jugadors"));
-            frame.cat.addActionListener((ActionEvent e) -> cardLayout.show(panelCentro, "Categoria")); // Cambia a Categoria
+           
 
             
             frame.setVisible(true);
