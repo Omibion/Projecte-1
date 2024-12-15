@@ -54,7 +54,7 @@ public class Temporades_JPanel extends JPanel {
 
         String[] columnNames = {"Temporada", "Seleccionar"};
 
-        // Inicializar la tabla con un modelo vacío
+
         tablaTemporadas = new JTable(new DefaultTableModel(columnNames, 0)) {
             @Override
             public Class<?> getColumnClass(int column) {
@@ -85,8 +85,6 @@ public class Temporades_JPanel extends JPanel {
         gbc.insets = new Insets(0, 10, 10, 10); 
         this.add(btnEsborrar, gbc);
     }
-
-    // Métodos para obtener los elementos de la vista
     public JComboBox<String> getComboAnyInici() {
         return comboAnyInici;
     }
@@ -105,34 +103,23 @@ public class Temporades_JPanel extends JPanel {
 
   
 public void cargarTemporadas(ArrayList<Temporada> listaTemporadas) {
-    // Obtén el modelo de la tabla
+ 
     DefaultTableModel model = (DefaultTableModel) tablaTemporadas.getModel();
-    
-    // Limpiar las filas existentes
+
     model.setRowCount(0);
 
-    // Formateador para obtener solo los dos últimos dígitos del año
     SimpleDateFormat sdf = new SimpleDateFormat("yy");
-
-    // Itera sobre la lista de temporadas y agrega las filas a la tabla
     for (Temporada temporada : listaTemporadas) {
         System.out.println("" + temporada.toString());
-        
-        // Creamos un array de objetos para la fila de la tabla
+
         Object[] rowData = new Object[2];
-        
-        // Formateamos las fechas de inicio y fin para obtener los dos últimos dígitos del año
+
         String anyIniStr = sdf.format(temporada.getAnyIni());
         String anyFiStr = sdf.format(temporada.getAnyFi());
 
-        // Concatenamos el rango de años en el formato "anyini-anyfi"
         String anyPeriodo = anyIniStr + "-" + anyFiStr;
-
-        // Asignamos los valores a las celdas de la fila
-        rowData[0] = anyPeriodo; // El rango de años "anyini-anyfi"
-        rowData[1] = false; // Valor para la casilla de selección (puedes cambiarlo si es necesario)
-
-        // Añadimos la fila al modelo de la tabla
+        rowData[0] = anyPeriodo; 
+        rowData[1] = false; 
         model.addRow(rowData);
     }
 }

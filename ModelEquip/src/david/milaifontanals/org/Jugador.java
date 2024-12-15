@@ -4,8 +4,10 @@
  */
 package david.milaifontanals.org;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -150,7 +152,7 @@ public class Jugador {
     }
     return edad;
 }
-    public void asignarCategoria(List<Categoria> categorias) {
+    public void asignarCategoria(ArrayList<Categoria> categorias) {
     int edad = calcularEdad(this.dataNaix); 
 
     for (Categoria categoria : categorias) {

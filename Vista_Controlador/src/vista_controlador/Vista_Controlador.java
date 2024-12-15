@@ -3,7 +3,9 @@ package vista_controlador;
 import Vista.FRameLoggin;
 import Vista.FramePrincipal;
 import Vista.*;
+import david.milaifontanals.org.Categoria;
 import david.milaifontanals.org.Interficie_persistencia;
+import david.milaifontanals.org.Jugador;
 import david.milaifontanals.org.Temporada;
 import david.milaifontanals.org.conexio_BBDD;
 import david.milaifontanals.org.gestorEquipsException;
@@ -13,6 +15,8 @@ import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.event.HierarchyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -35,8 +39,11 @@ public class Vista_Controlador implements ActionListener {
         panelCentro.setLayout(cardLayout);
 
         JPanel panelTemporades = new Temporades_JPanel();
+        panelTemporades.setName("Temporades");
         JPanel panelEquips = new EquipsConsulta_JPanel();
+        panelEquips.setName("Equips");
         JPanel panelJugadors = new Jugadors_JPanel(); 
+        panelJugadors.setName("Jugadors");
         JPanel panelficha = new FitxaJugador_JPanel();
 
         panelCentro.add(panelTemporades, "Temporades");
@@ -50,7 +57,21 @@ public class Vista_Controlador implements ActionListener {
 
         this.fl.getLoginButton().addActionListener(this);
         this.fl.setVisible(true);
-        cargarTemporadasEnVista();
+       fp.temp.addHierarchyListener(e -> {
+    if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
+        if (fp.temp.isShowing()) {
+            cargarTemporadasEnVista();
+        }
+    }
+});
+
+fp.jugadors.addHierarchyListener(e -> {
+    if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
+        if (fp.jugadors.isShowing()) {
+            cargarJugadoresEnVista();
+        }
+    }
+});
     }
 @Override
 public void actionPerformed(ActionEvent e) {
@@ -104,6 +125,32 @@ private  void cargarTemporadasEnVista() {
         JOptionPane.showMessageDialog(fp, "Error al cargar las temporadas: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
+public void cargarJugadoresEnVista() {
+    try {
+        HashMap<Integer, Jugador> jugadores = persistencia.carregar_jugador();
+        Jugadors_JPanel jugadorsPanel = (Jugadors_JPanel) getPanelPorNombre("Jugadors"); 
+        ArrayList<Categoria> cat = persistencia.carregar_categories();
+        if (jugadorsPanel == null) {
+            System.err.println("El panel de jugadores no está disponible.");
+            return; // Salir si no se encontró
+        }
+        jugadorsPanel.actualizarTabla(jugadores,cat);
+    } catch (gestorEquipsException ex) {
+        JOptionPane.showMessageDialog(fp, "Error al cargar jugadores: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
+
+
+public JPanel getPanelPorNombre(String nombrePanel) {
+    CardLayout layout = (CardLayout) fp.getPanelCentro().getLayout();
+    for (Component comp : fp.getPanelCentro().getComponents()) {
+        if (fp.getPanelCentro().isAncestorOf(comp) && nombrePanel.equals(comp.getName())) {
+            return (JPanel) comp;
+        }
+    }
+    return null;
+}
+
 
 
     public static void main(String[] args) {

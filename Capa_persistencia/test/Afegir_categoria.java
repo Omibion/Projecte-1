@@ -22,7 +22,7 @@ public class Afegir_categoria {
         conexio_BBDD cone;
        try {
             cone = new conexio_BBDD();
-            cone.afegir_categoria("Benjamines", 6, 7);
+            cone.afegir_categoria("Benjamines", 8, 9);
            cone.conectionClose();
         } catch (gestorEquipsException ex) {
             Logger.getLogger(Prova_Connection.class.getName()).log(Level.SEVERE, null, ex);

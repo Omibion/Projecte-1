@@ -23,7 +23,7 @@ import java.util.HashMap;
 public class conexio_BBDD implements Interficie_persistencia{
     
             Connection con;
-            public HashMap<Integer,Categoria>hmcat=new HashMap<>();
+            public ArrayList<Categoria>hmcat=new ArrayList<>();
             public HashMap<Integer,Equip>hmeqp=new HashMap<>();
             public HashMap<Integer,Jugador>hmjug=new HashMap<>();
             public HashMap<String,Membre>hmmem=new HashMap<>();
@@ -315,7 +315,7 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
            
             
         }
-        hmcat.put(id, cat);
+        hmcat.add(id, cat);
         return cat;
     }
     
@@ -775,21 +775,52 @@ Temporada temp= hmtemp.get(id);
                 }    
     }
 
-   public HashMap carregar_categories() throws gestorEquipsException{
-       if(!(hmcat.size()==6)){//6 perque només hi han 6 categories i aixo ho marca la federació, no el club.
-           hmcat.clear();
-           for (int i = 0; i < 6; i++) {
-           try {
-               obtenir_categoria(i);//Ja se que es una güarrada, pero es que ja tenia aquest metode fet.
-           } catch (gestorEquipsException ex) {
-               throw new gestorEquipsException("Error en carregar categories",ex);
-           }
+  @Override
+public ArrayList<Categoria> carregar_categories() throws gestorEquipsException {
+    ArrayList<Categoria> categorias = new ArrayList<>();
+
+    try {
+        // Preparar la consulta
+        psObtenirCategoria = con.prepareStatement("SELECT * FROM categoria");
+
+        // Ejecutar la consulta
+        ResultSet rs = psObtenirCategoria.executeQuery();
+
+        // Procesar los resultados
+        while (rs.next()) { // Avanza el cursor y verifica si hay más filas
+            int idc = rs.getInt("id");
+            String nom = rs.getString("nom");
+            int anyini = rs.getInt("edat_min");
+            int anyfi = rs.getInt("edat_max");
+
            
-       } return hmcat;}
-       else{
-           return hmcat;
-       }
-   } 
+            Categoria cat = new Categoria(idc, nom, anyfi, anyini);
+            System.out.println(""+cat.toString());
+            categorias.add(cat);
+        }
+
+        // Validar que se han cargado exactamente 6 categorías
+        if (categorias.size() != 6) {
+            throw new gestorEquipsException("No se han encontrado las 6 categorías esperadas en la base de datos.");
+        }
+
+    } catch (SQLException ex) {
+        throw new gestorEquipsException("Error al cargar categorías desde la base de datos.", ex);
+    } finally {
+        // Cierra los recursos si es necesario
+        try {
+            if (psObtenirCategoria != null) {
+                psObtenirCategoria.close();
+            }
+        } catch (SQLException ex) {
+            System.err.println("Error al cerrar el PreparedStatement: " + ex.getMessage());
+        }
+    }
+
+    return categorias;
+}
+
+            @Override
   public HashMap carregar_jugador() throws gestorEquipsException{
       hmjug.clear();
         
