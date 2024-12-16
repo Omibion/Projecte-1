@@ -71,4 +71,9 @@ public interface Interficie_persistencia {
     public ArrayList carregar_categories() throws gestorEquipsException;
     
     public ArrayList<Temporada> carregar_temporades() throws gestorEquipsException;
+    
+    public HashMap carregar_equips() throws gestorEquipsException;
+    
+    public void commit() throws gestorEquipsException ;
+
 }  

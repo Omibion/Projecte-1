@@ -706,22 +706,34 @@ Temporada temp= hmtemp.get(id);
 
 
     @Override
-    public boolean eliminar_temporada(Temporada temp) throws gestorEquipsException {
-        if(psEliminarEquip==null){
-            try {
-                psEliminarEquip=con.prepareStatement("delete from temporada where id = ?");
-            } catch (SQLException ex) {
-                throw new gestorEquipsException("Error en preparar el statement per eliminar temporades",ex);
-            }
-            
+public boolean eliminar_temporada(Temporada temp) throws gestorEquipsException {
+    PreparedStatement psEliminarTemp = null;
+
+    try {
+        psEliminarTemp = con.prepareStatement("DELETE FROM temporada WHERE id = ?");
+        psEliminarTemp.setInt(1, temp.getIdTemp());
+        int rowsAffected = psEliminarTemp.executeUpdate();
+
+        if (rowsAffected == 0) {
+            throw new gestorEquipsException("No se encontró la temporada a eliminar.");
         }
-                try {
-                    psEliminarEquip.setInt(1, temp.getIdTemp());
-                    psEliminarEquip.executeUpdate();
-                    return true;
-                } catch (SQLException ex) {
-                    throw new gestorEquipsException("Error en preparar el statement per eliminar temporades",ex);
-                }      }
+
+        return true;
+
+    } catch (SQLException ex) {
+        
+        if (ex.getErrorCode() == 1451) { 
+            throw new gestorEquipsException("No se puede eliminar la temporada porque tiene equipos asociados.");
+        }
+        throw new gestorEquipsException("Error al eliminar la temporada: " + ex.getMessage(), ex);
+    } finally {
+        try {
+            if (psEliminarTemp != null) psEliminarTemp.close();
+        } catch (SQLException ex) {
+            throw new gestorEquipsException("Error al cerrar recursos de la base de datos", ex);
+        }
+    }
+}
 
   
     @Override
@@ -884,6 +896,56 @@ public ArrayList<Categoria> carregar_categories() throws gestorEquipsException {
     
     return listaTemporadas;
 }
+      @Override
+    public HashMap carregar_equips() throws gestorEquipsException { 
+       hmeqp.clear();
+       Equip eqp = null;
+        if(psObtenirEquip==null){
+            try {
+                psObtenirEquip=con.prepareStatement("select * from equip ");
+            } catch (SQLException ex) {
+                throw new gestorEquipsException("Error en preparar el statement per recuperar equips",ex);
+            }
+            try {
+                
+                 ResultSet rs = psObtenirEquip.executeQuery();
+                 while(rs.next()){
+                int ide=rs.getInt("id");
+                String nom = rs.getString("nom");
+                String tipus=rs.getString("tipus");
+                int idcat = rs.getInt("id_cat");
+                int idtemp= rs.getInt("temporada");
+                Categoria cat=hmcat.get(idcat);
+                Temporada temp = hmtemp.get(idtemp);
+                if(cat==null){
+                    cat=obtenir_categoria(idcat);
+            }
+                if(temp==null){
+                    temp=obtenir_temporada(idtemp);
+                }
+                char tip= tipus.charAt(0);
+                eqp=new Equip(ide,nom,tip,cat,temp);
+                hmeqp.getOrDefault(eqp.getIdEq(), eqp);
+                 }
+            } catch (SQLException ex) {
+                throw new gestorEquipsException("Error en executar la query per carregar equips",ex);
+            }
+           
+            
+        }
+        return hmeqp;
+    }
+
+    @Override
+    public void commit() throws gestorEquipsException {
+                try {
+                  con.commit(); 
+                } catch (SQLException ex) {
+                    throw new gestorEquipsException("Error en realitzar el commit", ex);
+                
+                }
+    }
+      
 
 }
 
