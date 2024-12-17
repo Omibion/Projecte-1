@@ -31,12 +31,21 @@ public class Vista_Controlador implements ActionListener {
     private FramePrincipal fp;
     private Interficie_persistencia persistencia;
     private Jugadors_JPanel panelJugadors;
+    private HashMap <Integer,Jugador>hmjug;
+    private ArrayList <Temporada>hmtemp;
+    private HashMap <Integer,Categoria>hmcat;
+    private HashMap <Integer,Equip>hmeqp;
     public Vista_Controlador() throws gestorEquipsException {
         try {    
             this.persistencia = new conexio_BBDD();  
         } catch (gestorEquipsException ex) {
             throw new gestorEquipsException("Error al inicializar la capa de persistencia", ex);
         }
+        hmcat=persistencia.carregar_categories();
+        hmjug=persistencia.carregar_jugador();
+        hmtemp=persistencia.carregar_temporades();
+        hmeqp=persistencia.carregar_equips();
+        
         this.fl = new FRameLoggin();
         this.fp = new FramePrincipal();
 
@@ -83,18 +92,18 @@ public class Vista_Controlador implements ActionListener {
         eliminarTemporadasSeleccionadas((Temporades_JPanel) panelTemporades);
     }
 });
-        ((Jugadors_JPanel) panelJugadors).getCercaPerNomButton().addActionListener(e -> buscarPorNombre());
-        ((Jugadors_JPanel) panelJugadors).getCercaPerFechaButton().addActionListener(e -> buscarPorFecha());
-        ((Jugadors_JPanel) panelJugadors).getCercaPerCategoriaButton().addActionListener(e -> buscarPorCategoria());
-        ((Jugadors_JPanel) panelJugadors).getCercaButton().addActionListener(e-> buscarPerNIF());
-
+        ((Jugadors_JPanel) panelJugadors).getCercaPerNomButton().addActionListener(e -> buscarPorNombre(hmjug,hmcat));
+        ((Jugadors_JPanel) panelJugadors).getCercaPerFechaButton().addActionListener(e -> buscarPorFecha(hmjug,hmcat));
+        ((Jugadors_JPanel) panelJugadors).getCercaPerCategoriaButton().addActionListener(e -> buscarPorCategoria(hmjug,hmcat));
+        ((Jugadors_JPanel) panelJugadors).getCercaButton().addActionListener(e-> buscarPerNIF(hmjug,hmcat));
+        ((EquipsConsulta_JPanel) panelEquips).getCerca().addActionListener(e-> buscarperTemporadaiCategoria(hmeqp));
        fp.temp.addHierarchyListener(e -> {
             if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
                 if (panelTemporades.isShowing()) {
                     cargarTemporadasEnVista();
-                      cargarJugadoresEnVista();
-                    cargarCategoriasEnVista();
-                    cargarEquiposEnVista();
+                      cargarJugadoresEnVista(hmjug,hmcat);
+                    cargarCategoriasEnVista(hmcat);
+                    cargarEquiposEnVista(hmeqp);
                 }
             }
         });
@@ -164,20 +173,13 @@ public class Vista_Controlador implements ActionListener {
         }
     }
 
-     public void cargarJugadoresEnVista() {
-        try {
-            HashMap<Integer, Jugador> jugadores = persistencia.carregar_jugador();
-            
-            Jugadors_JPanel jugadorsPanel = (Jugadors_JPanel) getPanelPorNombre("Jugadors"); 
-            HashMap<Integer,Categoria> cat = persistencia.carregar_categories();
-            if (jugadorsPanel == null) {
-                System.err.println("El panel de jugadores no está disponible.");
-                return; 
-            }
-            jugadorsPanel.actualizarTabla(jugadores, cat);
-        } catch (gestorEquipsException ex) {
-            JOptionPane.showMessageDialog(fp, "Error al cargar jugadores: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
+     public void cargarJugadoresEnVista(HashMap<Integer, Jugador> jugadores,HashMap<Integer,Categoria> cat) {
+         Jugadors_JPanel jugadorsPanel = (Jugadors_JPanel) getPanelPorNombre("Jugadors");
+         if (jugadorsPanel == null) {
+             System.err.println("El panel de jugadores no está disponible.");
+             return;
+         }
+         jugadorsPanel.actualizarTabla(jugadores, cat);
     }
 
 
@@ -248,36 +250,15 @@ private void eliminarTemporadasSeleccionadas(Temporades_JPanel panelTemporadesVi
     }
 }
 
-public void cargarCategoriasEnVista() {
-    try {
-        HashMap<Integer,Categoria> categorias = persistencia.carregar_categories();
-
-        Jugadors_JPanel panelJugadors = (Jugadors_JPanel) fp.getPanelCentro().getComponent(2);
-        panelJugadors.cargarCategorias(categorias);
-    } catch (gestorEquipsException ex) {
-        JOptionPane.showMessageDialog(fp, "Error al cargar las categorías: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-    }
+public void cargarCategoriasEnVista( HashMap<Integer,Categoria> categorias) {
+    Jugadors_JPanel panelJugadors = (Jugadors_JPanel) fp.getPanelCentro().getComponent(2);
+    panelJugadors.cargarCategorias(categorias);
 }
 
 
-private void buscarPorNombre() {
+private void buscarPorNombre(HashMap<Integer, Jugador> jugadores,HashMap<Integer,Categoria> cat) {
     String nombre = panelJugadors.getNombreField().getText().toLowerCase();
-    HashMap<Integer, Jugador> jugadoresFiltrados = new HashMap<>(); 
-    HashMap<Integer, Jugador> jugadores = null; 
-    HashMap<Integer,Categoria> cat=null;
-        try {
-            cat = persistencia.carregar_categories();
-        } catch (gestorEquipsException ex) {
-            Logger.getLogger(Vista_Controlador.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    
-    try {
-        jugadores = persistencia.carregar_jugador(); 
-    } catch (gestorEquipsException ex) {
-        Logger.getLogger(Vista_Controlador.class.getName()).log(Level.SEVERE, null, ex);
-    }
-
-    
+    HashMap<Integer, Jugador> jugadoresFiltrados = new HashMap<>();
     if (nombre.isEmpty()) {
         panelJugadors.actualizarTabla(jugadores, cat);
         return;
@@ -292,68 +273,37 @@ private void buscarPorNombre() {
 
     panelJugadors.actualizarTabla(jugadoresFiltrados, cat);
 }
- private void buscarPorFecha() {
+ private void buscarPorFecha(HashMap<Integer, Jugador> jugadores,HashMap<Integer,Categoria> cat) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String fecha = panelJugadors.getFechaField().getText(); 
             HashMap<Integer, Jugador> jugadoresFiltrados = new HashMap<>();
-            HashMap<Integer, Jugador> jugadores = null;
-            HashMap<Integer,Categoria> cat=null;
-            cat=persistencia.carregar_categories();
-            jugadores= persistencia.carregar_jugador();
-           
             for (Jugador jugador : jugadores.values()) {
                 if (sdf.format(jugador.getDataNaix()).contains(fecha)) {
                     jugadoresFiltrados.put(jugador.getId(), jugador);
                 }
             }
-
-            // Actualizar la tabla con los jugadores filtrados
             panelJugadors.actualizarTabla(jugadoresFiltrados, cat);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(panelJugadors, "Formato de fecha no válido.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
- private void buscarPorCategoria() {
+ private void buscarPorCategoria(HashMap<Integer, Jugador> jugadores,HashMap<Integer,Categoria> cat) {
         String categoriaSeleccionada = (String) panelJugadors.getCategoriaComboBox().getSelectedItem(); 
         HashMap<Integer, Jugador> jugadoresFiltrados = new HashMap<>();
-        HashMap<Integer, Jugador> jugadores = null;
-            HashMap<Integer,Categoria> cat=null;
-        try {
-            cat=persistencia.carregar_categories();
-            jugadores= persistencia.carregar_jugador();
-        } catch (gestorEquipsException ex) {
-            Logger.getLogger(Vista_Controlador.class.getName()).log(Level.SEVERE, null, ex);
-        }
-            
-        
         for (Jugador jugador : jugadores.values()) {
             jugador.asignarCategoria(cat);
             if (jugador.getCat().getNom().equals(categoriaSeleccionada)) {
                 jugadoresFiltrados.put(jugador.getId(), jugador);
             }
         }
-
-      
         panelJugadors.actualizarTabla(jugadoresFiltrados, cat);
     }
-private void buscarPerNIF() {
+private void buscarPerNIF(HashMap<Integer, Jugador> jugadores,HashMap<Integer,Categoria> cat) {
     String NIF = panelJugadors.getNifField().getText().toLowerCase();
     HashMap<Integer, Jugador> jugadoresFiltrados = new HashMap<>(); 
-    HashMap<Integer, Jugador> jugadores = null; 
-    HashMap<Integer,Categoria> cat=null;
-        try {
-            cat = persistencia.carregar_categories();
-        } catch (gestorEquipsException ex) {
-            Logger.getLogger(Vista_Controlador.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    
-    try {
-        jugadores = persistencia.carregar_jugador(); 
-    } catch (gestorEquipsException ex) {
-        Logger.getLogger(Vista_Controlador.class.getName()).log(Level.SEVERE, null, ex);
-    }
+     
     if (NIF.isEmpty()) {
         panelJugadors.actualizarTabla(jugadores, cat);
         return;
@@ -367,21 +317,62 @@ private void buscarPerNIF() {
         panelJugadors.actualizarTabla(jugadoresFiltrados, cat);
     }
 }
-
-private void cargarEquiposEnVista() {
+private void cargarTemporadasEnComboBox(EquipsConsulta_JPanel equipsPanel) {
     try {
+      
+        ArrayList<Temporada> listaTemporadas = persistencia.carregar_temporades();
+        SimpleDateFormat sdf = new SimpleDateFormat("yy");
+   
+        equipsPanel.getTemporada().removeAllItems();
 
-        HashMap<Integer, Equip> equipos = persistencia.carregar_equips(); 
-
-        EquipsConsulta_JPanel equipsPanel = (EquipsConsulta_JPanel) getPanelPorNombre("Equips"); 
-
-        equipsPanel.actualizarTablaEquipos(equipos);
-
-        cargarTemporadasEnComboBox(equipsPanel);
-        cargarCategoriasEnComboBox(equipsPanel);
+      
+        for (Temporada temporada : listaTemporadas) {
+             String anyIniStr = sdf.format(temporada.getAnyIni());
+             String anyFiStr = sdf.format(temporada.getAnyFi());
+            String temporadaStr = anyIniStr + "-" + anyFiStr;
+            equipsPanel.getTemporada().addItem(temporadaStr);  
+        }
         
     } catch (gestorEquipsException ex) {
-        JOptionPane.showMessageDialog(fp, "Error al cargar los equipos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(fp, "Error al cargar las temporadas: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
+private void cargarCategoriasEnComboBox(EquipsConsulta_JPanel equipsPanel,HashMap <Integer, Categoria> listaCategorias){
+    
+        equipsPanel.getCategoria().removeAllItems();
+        listaCategorias.forEach((key,Categoria)->{
+            equipsPanel.getCategoria().addItem(Categoria.getNom());
+    });
+}
+private void cargarEquiposEnVista(HashMap<Integer, Equip> equipos) {
+    EquipsConsulta_JPanel equipsPanel = (EquipsConsulta_JPanel) getPanelPorNombre("Equips");
+    equipsPanel.actualizarTablaEquipos(equipos);
+    cargarTemporadasEnComboBox(equipsPanel);
+    cargarCategoriasEnComboBox(equipsPanel,hmcat);
+}
+private void buscarperTemporadaiCategoria(HashMap<Integer, Equip> equipos) {
+    EquipsConsulta_JPanel equipsPanel = (EquipsConsulta_JPanel) getPanelPorNombre("Equips");
+
+    String temporadaSeleccionada = (String) equipsPanel.getTemporada().getSelectedItem();
+    String categoriaSeleccionada = (String) equipsPanel.getCategoria().getSelectedItem();
+    
+    try {
+ 
+        String dosPrimerosDigitosTemporada = temporadaSeleccionada.substring(0, 2);
+        HashMap<Integer, Equip> equiposFiltrados = new HashMap<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yy"); 
+        for (Equip equip : equipos.values()) {
+            String tempEnYY = sdf.format(equip.getTemp().getAnyIni());
+            if (equip.getCat().getNom().equals(categoriaSeleccionada) &&
+                dosPrimerosDigitosTemporada.equals(tempEnYY)) {
+                System.out.println(""+equip.getCat().getNom());
+                equiposFiltrados.put(equip.getIdEq(), equip);
+            }
+        }
+        equipsPanel.actualizarTablaEquipos(equiposFiltrados);
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(fp, "Error inesperado: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
 

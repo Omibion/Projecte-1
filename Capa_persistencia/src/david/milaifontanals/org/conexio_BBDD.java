@@ -293,7 +293,7 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
             return cat;
         }
        
-        if(psObtenirCategoria==null){
+       
             try {
                 psObtenirCategoria=con.prepareStatement("select * from categoria where id = ?");
             } catch (SQLException ex) {
@@ -312,10 +312,19 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
                  
             } catch (SQLException ex) {
                 throw new gestorEquipsException("Error en executar la query per carregar categoria",ex);
+            }finally{
+                try {
+    if (psObtenirCategoria != null) {
+        psObtenirCategoria.close();
+    }
+} catch (SQLException e) {
+    System.err.println("Error al cerrar PreparedStatement: " + e.getMessage());
+}
+
             }
            
             
-        }
+        
         hmcat.put(id, cat);
         return cat;
     }
@@ -819,7 +828,7 @@ public HashMap<Integer,Categoria> carregar_categories() throws gestorEquipsExcep
   public HashMap carregar_jugador() throws gestorEquipsException{
       hmjug.clear();
         
-        if(psObtenirJugador==null){
+       
             try {
                 psCarregarJugadors=con.prepareStatement("select * from jugador ");
             } catch (SQLException ex) {
@@ -849,7 +858,7 @@ public HashMap<Integer,Categoria> carregar_categories() throws gestorEquipsExcep
             }
            
             
-        }
+        
         return hmjug;
     }
     public ArrayList<Temporada> carregar_temporades() throws gestorEquipsException {
@@ -883,13 +892,13 @@ public HashMap<Integer, Equip> carregar_equips() throws gestorEquipsException {
     hmeqp.clear(); 
     Equip eqp = null;
     
-    if (psObtenirEquip == null) {
+   
         try {
             psObtenirEquip = con.prepareStatement("SELECT * FROM equip");
         } catch (SQLException ex) {
             throw new gestorEquipsException("Error en preparar el statement para recuperar equipos", ex);
         }
-    }
+    
     try {
         ResultSet rs = psObtenirEquip.executeQuery();
         while (rs.next()) {
