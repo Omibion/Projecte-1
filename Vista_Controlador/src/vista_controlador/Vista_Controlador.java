@@ -92,15 +92,16 @@ public class Vista_Controlador implements ActionListener {
             if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
                 if (panelTemporades.isShowing()) {
                     cargarTemporadasEnVista();
+                      cargarJugadoresEnVista();
+                    cargarCategoriasEnVista();
+                    cargarEquiposEnVista();
                 }
             }
         });
 
         
                 
-                    cargarJugadoresEnVista();
-                    cargarCategoriasEnVista();
-                    cargarEquiposEnVista();
+                  
        
     }
 
@@ -168,7 +169,7 @@ public class Vista_Controlador implements ActionListener {
             HashMap<Integer, Jugador> jugadores = persistencia.carregar_jugador();
             
             Jugadors_JPanel jugadorsPanel = (Jugadors_JPanel) getPanelPorNombre("Jugadors"); 
-            ArrayList<Categoria> cat = persistencia.carregar_categories();
+            HashMap<Integer,Categoria> cat = persistencia.carregar_categories();
             if (jugadorsPanel == null) {
                 System.err.println("El panel de jugadores no está disponible.");
                 return; 
@@ -249,7 +250,7 @@ private void eliminarTemporadasSeleccionadas(Temporades_JPanel panelTemporadesVi
 
 public void cargarCategoriasEnVista() {
     try {
-        ArrayList<Categoria> categorias = persistencia.carregar_categories();
+        HashMap<Integer,Categoria> categorias = persistencia.carregar_categories();
 
         Jugadors_JPanel panelJugadors = (Jugadors_JPanel) fp.getPanelCentro().getComponent(2);
         panelJugadors.cargarCategorias(categorias);
@@ -263,7 +264,7 @@ private void buscarPorNombre() {
     String nombre = panelJugadors.getNombreField().getText().toLowerCase();
     HashMap<Integer, Jugador> jugadoresFiltrados = new HashMap<>(); 
     HashMap<Integer, Jugador> jugadores = null; 
-    ArrayList<Categoria> cat=null;
+    HashMap<Integer,Categoria> cat=null;
         try {
             cat = persistencia.carregar_categories();
         } catch (gestorEquipsException ex) {
@@ -284,8 +285,8 @@ private void buscarPorNombre() {
 
     for (Jugador jugador : jugadores.values()) {
         if (jugador.getNomJugador().toLowerCase().contains(nombre)) {
-            jugadoresFiltrados.put(jugador.getId(), jugador); // Si contiene el texto, lo agrega al map filtrado
-            System.out.println("Jugador encontrado: " + jugador.getNomJugador());
+            jugadoresFiltrados.put(jugador.getId(), jugador);
+           
         }
     }
 
@@ -297,7 +298,7 @@ private void buscarPorNombre() {
             String fecha = panelJugadors.getFechaField().getText(); 
             HashMap<Integer, Jugador> jugadoresFiltrados = new HashMap<>();
             HashMap<Integer, Jugador> jugadores = null;
-            ArrayList<Categoria> cat=null;
+            HashMap<Integer,Categoria> cat=null;
             cat=persistencia.carregar_categories();
             jugadores= persistencia.carregar_jugador();
            
@@ -318,7 +319,7 @@ private void buscarPorNombre() {
         String categoriaSeleccionada = (String) panelJugadors.getCategoriaComboBox().getSelectedItem(); 
         HashMap<Integer, Jugador> jugadoresFiltrados = new HashMap<>();
         HashMap<Integer, Jugador> jugadores = null;
-            ArrayList<Categoria> cat=null;
+            HashMap<Integer,Categoria> cat=null;
         try {
             cat=persistencia.carregar_categories();
             jugadores= persistencia.carregar_jugador();
@@ -341,7 +342,7 @@ private void buscarPerNIF() {
     String NIF = panelJugadors.getNifField().getText().toLowerCase();
     HashMap<Integer, Jugador> jugadoresFiltrados = new HashMap<>(); 
     HashMap<Integer, Jugador> jugadores = null; 
-    ArrayList<Categoria> cat=null;
+    HashMap<Integer,Categoria> cat=null;
         try {
             cat = persistencia.carregar_categories();
         } catch (gestorEquipsException ex) {
@@ -353,8 +354,6 @@ private void buscarPerNIF() {
     } catch (gestorEquipsException ex) {
         Logger.getLogger(Vista_Controlador.class.getName()).log(Level.SEVERE, null, ex);
     }
-
-    
     if (NIF.isEmpty()) {
         panelJugadors.actualizarTabla(jugadores, cat);
         return;
@@ -362,8 +361,8 @@ private void buscarPerNIF() {
 
     for (Jugador jugador : jugadores.values()) {
         if (jugador.getIdLegal().toLowerCase().contains(NIF)) {
-            jugadoresFiltrados.put(jugador.getId(), jugador); // Si contiene el texto, lo agrega al map filtrado
-            System.out.println("Jugador encontrado: " + jugador.getNomJugador());
+            jugadoresFiltrados.put(jugador.getId(), jugador); 
+            
         }
         panelJugadors.actualizarTabla(jugadoresFiltrados, cat);
     }
@@ -371,19 +370,21 @@ private void buscarPerNIF() {
 
 private void cargarEquiposEnVista() {
     try {
+
         HashMap<Integer, Equip> equipos = persistencia.carregar_equips(); 
+
+        EquipsConsulta_JPanel equipsPanel = (EquipsConsulta_JPanel) getPanelPorNombre("Equips"); 
+
+        equipsPanel.actualizarTablaEquipos(equipos);
+
+        cargarTemporadasEnComboBox(equipsPanel);
+        cargarCategoriasEnComboBox(equipsPanel);
         
-        EquipsConsulta_JPanel equipsPanel = (EquipsConsulta_JPanel) getPanelPorNombre("Equips"); // Obtener el panel de equipos
-        
-        if (equipsPanel != null) {
-            equipsPanel.actualizarTabla(equipos); 
-        } else {
-            System.err.println("El panel de equipos no está disponible.");
-        }
     } catch (gestorEquipsException ex) {
         JOptionPane.showMessageDialog(fp, "Error al cargar los equipos: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
+
 
     public static void main(String[] args) {
         try {

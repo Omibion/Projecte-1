@@ -152,15 +152,16 @@ public class Jugador {
     }
     return edad;
 }
-    public void asignarCategoria(ArrayList<Categoria> categorias) {
+    public void asignarCategoria(HashMap<Integer, Categoria> categorias) {
     int edad = calcularEdad(this.dataNaix); 
 
-    for (Categoria categoria : categorias) {
-        if (edad >= categoria.getEdatMin() && edad <= categoria.getEdatMax()) {
-            this.cat = categoria; 
-            break;
-        }
+    categorias.values().forEach(categoria -> {
+    if (edad >= categoria.getEdatMin() && edad <= categoria.getEdatMax() && this.cat == null) {
+        this.cat = categoria;
     }
+});
+
+    
 
     if (this.cat == null) {
         System.out.println("No se encontró una categoría para la edad: " + edad);

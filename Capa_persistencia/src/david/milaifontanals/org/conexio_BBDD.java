@@ -23,7 +23,7 @@ import java.util.HashMap;
 public class conexio_BBDD implements Interficie_persistencia{
     
             Connection con;
-            public ArrayList<Categoria>hmcat=new ArrayList<>();
+            public HashMap<Integer,Categoria>hmcat;
             public HashMap<Integer,Equip>hmeqp=new HashMap<>();
             public HashMap<Integer,Jugador>hmjug=new HashMap<>();
             public HashMap<String,Membre>hmmem=new HashMap<>();
@@ -56,6 +56,7 @@ public class conexio_BBDD implements Interficie_persistencia{
             
             
         public conexio_BBDD() throws gestorEquipsException{
+        this.hmcat = new HashMap<>();
         String nomFitxer = "conexioBBDD.properties";
         Properties props = new Properties();
         try {
@@ -315,7 +316,7 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
            
             
         }
-        hmcat.add(id, cat);
+        hmcat.put(id, cat);
         return cat;
     }
     
@@ -445,11 +446,8 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
    
     @Override
     public Temporada obtenir_temporada(int id) throws gestorEquipsException {
-Temporada temp= hmtemp.get(id);
-        if(temp!=null){
-            return temp;
-        }
-        if(psObtenirTemporada==null){
+        Temporada temp= hmtemp.get(id);
+       
             try {
                 psObtenirTemporada=con.prepareStatement("select * from temporada where id = ?");
             } catch (SQLException ex) {
@@ -468,9 +466,6 @@ Temporada temp= hmtemp.get(id);
             } catch (SQLException ex) {
                 throw new gestorEquipsException("Error en executar la query per carregar categoria",ex);
             }
-           
-            
-        }
         return temp;   
     }
 
@@ -788,38 +783,27 @@ public boolean eliminar_temporada(Temporada temp) throws gestorEquipsException {
     }
 
   @Override
-public ArrayList<Categoria> carregar_categories() throws gestorEquipsException {
-    ArrayList<Categoria> categorias = new ArrayList<>();
+public HashMap<Integer,Categoria> carregar_categories() throws gestorEquipsException {
+    
 
     try {
-        // Preparar la consulta
         psObtenirCategoria = con.prepareStatement("SELECT * FROM categoria");
-
-        // Ejecutar la consulta
         ResultSet rs = psObtenirCategoria.executeQuery();
-
-        // Procesar los resultados
-        while (rs.next()) { // Avanza el cursor y verifica si hay más filas
+        while (rs.next()) { 
             int idc = rs.getInt("id");
             String nom = rs.getString("nom");
             int anyini = rs.getInt("edat_min");
             int anyfi = rs.getInt("edat_max");
-
-           
             Categoria cat = new Categoria(idc, nom, anyfi, anyini);
-            System.out.println(""+cat.toString());
-            categorias.add(cat);
+            hmcat.put(idc,cat);
         }
-
-        // Validar que se han cargado exactamente 6 categorías
-        if (categorias.size() != 6) {
+        if (hmcat.size() != 6) {
             throw new gestorEquipsException("No se han encontrado las 6 categorías esperadas en la base de datos.");
         }
-
     } catch (SQLException ex) {
         throw new gestorEquipsException("Error al cargar categorías desde la base de datos.", ex);
     } finally {
-        // Cierra los recursos si es necesario
+  
         try {
             if (psObtenirCategoria != null) {
                 psObtenirCategoria.close();
@@ -828,8 +812,7 @@ public ArrayList<Categoria> carregar_categories() throws gestorEquipsException {
             System.err.println("Error al cerrar el PreparedStatement: " + ex.getMessage());
         }
     }
-
-    return categorias;
+   return hmcat;
 }
 
             @Override
@@ -886,7 +869,6 @@ public ArrayList<Categoria> carregar_categories() throws gestorEquipsException {
             int idt = rs.getInt("id");
             Date anyini = rs.getDate("anyini");
             Date anyfi = rs.getDate("anyfi");
-            System.out.println(""+anyini+anyfi);
             Temporada temp = new Temporada(idt, anyini, anyfi);
             listaTemporadas.add(temp);
         }
@@ -896,45 +878,50 @@ public ArrayList<Categoria> carregar_categories() throws gestorEquipsException {
     
     return listaTemporadas;
 }
-      @Override
-    public HashMap carregar_equips() throws gestorEquipsException { 
-       hmeqp.clear();
-       Equip eqp = null;
-        if(psObtenirEquip==null){
-            try {
-                psObtenirEquip=con.prepareStatement("select * from equip ");
-            } catch (SQLException ex) {
-                throw new gestorEquipsException("Error en preparar el statement per recuperar equips",ex);
-            }
-            try {
-                
-                 ResultSet rs = psObtenirEquip.executeQuery();
-                 while(rs.next()){
-                int ide=rs.getInt("id");
-                String nom = rs.getString("nom");
-                String tipus=rs.getString("tipus");
-                int idcat = rs.getInt("id_cat");
-                int idtemp= rs.getInt("temporada");
-                Categoria cat=hmcat.get(idcat);
-                Temporada temp = hmtemp.get(idtemp);
-                if(cat==null){
-                    cat=obtenir_categoria(idcat);
-            }
-                if(temp==null){
-                    temp=obtenir_temporada(idtemp);
-                }
-                char tip= tipus.charAt(0);
-                eqp=new Equip(ide,nom,tip,cat,temp);
-                hmeqp.getOrDefault(eqp.getIdEq(), eqp);
-                 }
-            } catch (SQLException ex) {
-                throw new gestorEquipsException("Error en executar la query per carregar equips",ex);
-            }
-           
-            
+    @Override
+public HashMap<Integer, Equip> carregar_equips() throws gestorEquipsException {
+    hmeqp.clear(); 
+    Equip eqp = null;
+    
+    if (psObtenirEquip == null) {
+        try {
+            psObtenirEquip = con.prepareStatement("SELECT * FROM equip");
+        } catch (SQLException ex) {
+            throw new gestorEquipsException("Error en preparar el statement para recuperar equipos", ex);
         }
-        return hmeqp;
     }
+    try {
+        ResultSet rs = psObtenirEquip.executeQuery();
+        while (rs.next()) {
+            int ide = rs.getInt("id");
+            String nom = rs.getString("nom");
+            String tipus = rs.getString("tipus");
+            int idcat = rs.getInt("id_cat");
+            int idtemp = rs.getInt("temporada");
+            Categoria cat = hmcat.get(idcat);
+            if (cat == null) {
+                cat = obtenir_categoria(idcat);
+            }
+            Temporada temp = obtenir_temporada(idtemp);            
+            char tip = tipus.charAt(0);
+            eqp = new Equip(ide, nom, tip, cat, temp);
+            hmeqp.put(eqp.getIdEq(), eqp);
+        }
+    } catch (SQLException ex) {
+        throw new gestorEquipsException("Error al ejecutar la query para cargar equipos", ex);
+    } finally {
+        try {
+            if (psObtenirEquip != null) {
+                psObtenirEquip.close();
+            }
+        } catch (SQLException ex) {
+            System.err.println("Error al cerrar el PreparedStatement: " + ex.getMessage());
+        }
+    }
+
+    return hmeqp;
+}
+
 
     @Override
     public void commit() throws gestorEquipsException {

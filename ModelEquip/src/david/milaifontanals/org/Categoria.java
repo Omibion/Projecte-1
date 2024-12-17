@@ -27,6 +27,14 @@ public class Categoria {
         this.edatMin = edatMin;
     }
 
+    Categoria(int idcat, String string) {
+        this.id=idcat;
+        this.nom="";
+        this.edatMax=0;
+        this.edatMin=0;
+    }
+
+    
     public int getId() {
         return id;
     }
@@ -51,5 +59,8 @@ public class Categoria {
         return edatMin;
     }
 
-    
+
+    public int compareTo(Categoria o) {
+        return Integer.compare(this.id, o.id);
+    }
 }

@@ -51,12 +51,19 @@ public class Jugadors_JPanel extends JPanel {
     String[] columnNames = {"Nom", "NIF", "Data de naixement", "Categoria", "Seleccionat"};
     model = new DefaultTableModel(columnNames, 0);
     taulaJugadors = new JTable(model) {
-        @Override
-        public Class<?> getColumnClass(int column) {
-            return column == 4 ? Boolean.class : String.class;
-        }
-    };
+    @Override
+    public Class<?> getColumnClass(int column) {
+        return column == 4 ? Boolean.class : String.class; // La columna 4 es de tipo Boolean, el resto es String
+    }
+
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false; // Ninguna celda será editable
+    }
+};
+
     taulaJugadors.setRowHeight(30); 
+   
     JScrollPane scrollPane = new JScrollPane(taulaJugadors);
     add(scrollPane, BorderLayout.CENTER);
     JPanel bottomPanel = new JPanel(new GridLayout(1, 3, 10, 10));
@@ -68,7 +75,7 @@ public class Jugadors_JPanel extends JPanel {
     bottomPanel.add(exportarJugadors);
     add(bottomPanel, BorderLayout.SOUTH);
 }
-    public void actualizarTabla(HashMap<Integer, Jugador> jugadores, ArrayList<Categoria> cat) {
+    public void actualizarTabla(HashMap<Integer, Jugador> jugadores, HashMap<Integer, Categoria> cat) {
         model.setRowCount(0);
 
         jugadores.forEach((key, jugador) -> {
@@ -84,11 +91,11 @@ public class Jugadors_JPanel extends JPanel {
         });
     }
 
-public void cargarCategorias(ArrayList<Categoria> categorias) {
+public void cargarCategorias(HashMap<Integer, Categoria> categorias) {
     categoriaComboBox.removeAllItems(); 
-    for (Categoria categoria : categorias) {
+    categorias.forEach((id, categoria) -> {
         categoriaComboBox.addItem(categoria.getNom());
-    }
+    });
 }
 
     public void buscarPorNombre(HashMap<Integer, Jugador> jugadores) {
@@ -101,7 +108,7 @@ public void cargarCategorias(ArrayList<Categoria> categorias) {
             }
         }
         
-        actualizarTabla(jugadoresFiltrados, new ArrayList<>());
+        actualizarTabla(jugadoresFiltrados, new HashMap<>());
     }
 
     public void buscarPorFecha(HashMap<Integer, Jugador> jugadores) {
@@ -116,7 +123,7 @@ public void cargarCategorias(ArrayList<Categoria> categorias) {
                 }
             }
             
-            actualizarTabla(jugadoresFiltrados, new ArrayList<>());
+            actualizarTabla(jugadoresFiltrados, new HashMap<>());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Formato de fecha no válido.", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -132,7 +139,7 @@ public void cargarCategorias(ArrayList<Categoria> categorias) {
             }
         }
         
-        actualizarTabla(jugadoresFiltrados, new ArrayList<>());
+        actualizarTabla(jugadoresFiltrados, new HashMap<>());
     }
 
 
