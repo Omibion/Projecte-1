@@ -74,6 +74,8 @@ public interface Interficie_persistencia {
     
     public HashMap carregar_equips() throws gestorEquipsException;
     
+    public HashMap<String, Membre> carregar_membres() throws gestorEquipsException;
+    
     public void commit() throws gestorEquipsException ;
 
 }  

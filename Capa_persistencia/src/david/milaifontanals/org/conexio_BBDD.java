@@ -53,6 +53,7 @@ public class conexio_BBDD implements Interficie_persistencia{
             private PreparedStatement psEliminarJugador;
             private PreparedStatement psCarregarJugadors;
             private PreparedStatement psCarregarTemporades;
+            private PreparedStatement psCarregarMembres;
             
             
         public conexio_BBDD() throws gestorEquipsException{
@@ -930,7 +931,36 @@ public HashMap<Integer, Equip> carregar_equips() throws gestorEquipsException {
 
     return hmeqp;
 }
+public HashMap<String, Membre> carregar_membres() throws gestorEquipsException {
+    hmmem.clear(); 
+    Membre mem = null;
 
+    try {
+        psCarregarMembres = con.prepareStatement("SELECT * FROM Membre");
+        ResultSet rs = psCarregarMembres.executeQuery();
+        while (rs.next()) {
+            int idjuga = rs.getInt("id_jugador");
+            int idequip = rs.getInt("id_equip");
+            String titu = rs.getString("titular");
+            Jugador jug = hmjug.get(idjuga);
+            if (jug == null) {
+                jug = obtenir_jugador(idjuga);
+            }
+            Equip eq = hmeqp.get(idequip);
+            if (eq == null) {
+                eq = obtenir_equip(idequip);
+            }
+            char tit = titu.charAt(0);
+            mem = new Membre(jug, eq, tit);
+            String clau = ""+jug.idLegal+eq.idEq;
+            hmmem.put(clau, mem);
+           
+        }
+    } catch (SQLException ex) {
+        throw new gestorEquipsException("Error al cargar membres", ex);
+    }
+    return hmmem;
+}
 
     @Override
     public void commit() throws gestorEquipsException {

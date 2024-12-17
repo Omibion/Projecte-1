@@ -71,6 +71,14 @@ public class EquipsConsulta_JPanel extends JPanel {
     public JButton getCerca() {
         return Cerca;
     }
+
+    public JTable getTaulaEquips() {
+        return taulaEquips;
+    }
+
+    public DefaultTableModel getModel() {
+        return model;
+    }
      
     public void actualizarTablaEquipos(HashMap<Integer,Equip> equipos) {
        
@@ -83,7 +91,7 @@ public class EquipsConsulta_JPanel extends JPanel {
         rowData[1] = equipo.getCat().getNom();
         rowData[2] = equipo.getTemp().getAnyFi(); 
         rowData[3] = Boolean.FALSE;
-             System.out.println(""+equipo.getNomEquip());
+             
         model.addRow(rowData);  
     });
     }

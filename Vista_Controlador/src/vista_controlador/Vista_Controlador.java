@@ -7,6 +7,7 @@ import david.milaifontanals.org.Categoria;
 import david.milaifontanals.org.Equip;
 import david.milaifontanals.org.Interficie_persistencia;
 import david.milaifontanals.org.Jugador;
+import david.milaifontanals.org.Membre;
 import david.milaifontanals.org.Temporada;
 import david.milaifontanals.org.conexio_BBDD;
 import david.milaifontanals.org.gestorEquipsException;
@@ -35,6 +36,7 @@ public class Vista_Controlador implements ActionListener {
     private ArrayList <Temporada>hmtemp;
     private HashMap <Integer,Categoria>hmcat;
     private HashMap <Integer,Equip>hmeqp;
+    private HashMap <String,Membre> hmmem;
     public Vista_Controlador() throws gestorEquipsException {
         try {    
             this.persistencia = new conexio_BBDD();  
@@ -45,6 +47,7 @@ public class Vista_Controlador implements ActionListener {
         hmjug=persistencia.carregar_jugador();
         hmtemp=persistencia.carregar_temporades();
         hmeqp=persistencia.carregar_equips();
+        hmmem=persistencia.carregar_membres();
         
         this.fl = new FRameLoggin();
         this.fp = new FramePrincipal();
@@ -97,6 +100,7 @@ public class Vista_Controlador implements ActionListener {
         ((Jugadors_JPanel) panelJugadors).getCercaPerCategoriaButton().addActionListener(e -> buscarPorCategoria(hmjug,hmcat));
         ((Jugadors_JPanel) panelJugadors).getCercaButton().addActionListener(e-> buscarPerNIF(hmjug,hmcat));
         ((EquipsConsulta_JPanel) panelEquips).getCerca().addActionListener(e-> buscarperTemporadaiCategoria(hmeqp));
+        ((EquipsConsulta_JPanel)panelEquips).getBorraEquip().addActionListener(e->borrarEquip(hmeqp,hmmem));
        fp.temp.addHierarchyListener(e -> {
             if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0) {
                 if (panelTemporades.isShowing()) {
@@ -365,7 +369,6 @@ private void buscarperTemporadaiCategoria(HashMap<Integer, Equip> equipos) {
             String tempEnYY = sdf.format(equip.getTemp().getAnyIni());
             if (equip.getCat().getNom().equals(categoriaSeleccionada) &&
                 dosPrimerosDigitosTemporada.equals(tempEnYY)) {
-                System.out.println(""+equip.getCat().getNom());
                 equiposFiltrados.put(equip.getIdEq(), equip);
             }
         }
@@ -375,6 +378,60 @@ private void buscarperTemporadaiCategoria(HashMap<Integer, Equip> equipos) {
         JOptionPane.showMessageDialog(fp, "Error inesperado: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
+private void borrarEquip(HashMap<Integer, Equip> equipos, HashMap<String, Membre> membres) {
+    EquipsConsulta_JPanel equipsPanel = (EquipsConsulta_JPanel) getPanelPorNombre("Equips");
+    int selectedRow = equipsPanel.getTaulaEquips().getSelectedRow(); 
+    
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(fp, "Por favor, seleccione un equipo para borrar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+
+    Object value = equipsPanel.getModel().getValueAt(selectedRow, 0);
+    int idEquip = 0;
+    if (value instanceof String) {
+        try {
+            idEquip = Integer.parseInt((String) value); // Convertir el valor a entero si es un String
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(fp, "Error: El valor del ID del equipo no es un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+            return; 
+        }
+    } else if (value instanceof Integer) {
+        idEquip = (Integer) value;
+    } else {
+        JOptionPane.showMessageDialog(fp, "Error: Tipo de dato inesperado para el ID del equipo.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    Equip equipToDelete = equipos.get(idEquip);
+    if (equipToDelete == null) {
+        JOptionPane.showMessageDialog(fp, "El equipo seleccionado no existe.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+ 
+    boolean tieneJugadores = membres.values().stream().anyMatch(m -> m.getEq().getIdEq() == idEquip);
+    if (tieneJugadores) {
+        JOptionPane.showMessageDialog(fp, "No se puede borrar el equipo porque tiene jugadores asociados.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    int confirm = JOptionPane.showConfirmDialog(fp, "¿Está seguro de borrar el equipo?", "Confirmar borrado", JOptionPane.YES_NO_OPTION);
+    if (confirm == JOptionPane.YES_OPTION) {
+        try {
+
+            if (persistencia.eliminar_equip(equipToDelete)) {
+                equipos.remove(idEquip); 
+                JOptionPane.showMessageDialog(fp, "Equipo borrado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                cargarEquiposEnVista(equipos); 
+            } else {
+                JOptionPane.showMessageDialog(fp, "Error al borrar el equipo.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (gestorEquipsException ex) {
+            JOptionPane.showMessageDialog(fp, "Error al borrar el equipo: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
+
 
 
     public static void main(String[] args) {
