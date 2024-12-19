@@ -672,21 +672,21 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
 
     @Override
     public boolean eliminar_equip(Equip eq) throws gestorEquipsException {
-             if(psEliminarEquip==null){
+             
             try {
                 psEliminarEquip=con.prepareStatement("delete from equip where id = ?");
             } catch (SQLException ex) {
                 throw new gestorEquipsException("Error en preparar el statement per eliminar equips",ex);
             }
             
-        }
+        
                 try {
                     psEliminarEquip.setInt(1, eq.getIdEq());
                     psEliminarEquip.executeUpdate();
                     return true;
                 } catch (SQLException ex) {
                     throw new gestorEquipsException("Error en preparar el statement per eliminar equips",ex);
-                }    
+                }  
     }
 
     @Override 

@@ -63,4 +63,8 @@ public class Categoria {
     public int compareTo(Categoria o) {
         return Integer.compare(this.id, o.id);
     }
+    public boolean esInferiorOIgual(Categoria otra) {
+    return this.id <= otra.id;
+}
+
 }
