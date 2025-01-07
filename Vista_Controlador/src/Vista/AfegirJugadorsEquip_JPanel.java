@@ -6,10 +6,12 @@ package Vista;
 
 import david.milaifontanals.org.Equip;
 import david.milaifontanals.org.Jugador;
+import david.milaifontanals.org.Membre;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -18,6 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -83,7 +86,6 @@ public class AfegirJugadorsEquip_JPanel extends JPanel{
         JScrollPane scrollPane = new JScrollPane(taulaJugadors);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Panel inferior
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         afegeixSeleccionats = new JButton("Afegeix seleccionats");
         esborraSeleccionats = new JButton("Esborra seleccionats");
@@ -104,7 +106,7 @@ public class AfegirJugadorsEquip_JPanel extends JPanel{
         }
     }
 
-
+    
     public JTextField getNifField() {
         return nifField;
     }
@@ -128,28 +130,40 @@ public class AfegirJugadorsEquip_JPanel extends JPanel{
     public JTable getTaulaJugadors() {
         return taulaJugadors;
     }
-    public boolean jugadorYaEnEquipo(Jugador jugador, HashMap<Integer, Jugador> jugadoresDelEquipo) {
-    return jugadoresDelEquipo.containsKey(jugador.getId());
+   public boolean jugadorYaEnEquipo(Membre membre, int idEquipoSeleccionado) {
+    
+    return membre.getEq().getIdEq() == idEquipoSeleccionado;
 }
 
-    public void actualizarTabla(HashMap<Integer, Jugador> jugadoresFiltrados) {
-    // Limpia la tabla
+public void actualizarTabla(HashMap<Integer, Jugador> jugadoresFiltrados, int idEquipoSeleccionado, ArrayList<Membre> membresDelEquipo) {
+
     model.setRowCount(0);
 
     for (Jugador jugador : jugadoresFiltrados.values()) {
-           if((jugadorYaEnEquipo(jugador,jugadoresFiltrados))){
-        Object[] rowData = new Object[7]; 
-        rowData[0] = jugador.getId();
-        rowData[1] = jugador.getNomJugador(); 
-        rowData[2] = jugador.getDataNaix(); 
-        rowData[3] = jugador.getIdLegal();
-        rowData[4] = jugador.getCat().getNom();
-        rowData[5] = false; 
-        rowData[6] = false;
+      
+        boolean estaEnEquipo = false;
+        for (Membre membre : membresDelEquipo) {
+            if (membre.getJug().getId() == jugador.getId() && jugadorYaEnEquipo(membre, idEquipoSeleccionado)) {
+                estaEnEquipo = true;
+                break;
+            }
+        }
 
-        model.addRow(rowData);}
-    
+        
+        if (!estaEnEquipo) {
+            Object[] rowData = new Object[7];
+            rowData[0] = jugador.getId();
+            rowData[1] = jugador.getNomJugador();
+            rowData[2] = jugador.getDataNaix();
+            rowData[3] = jugador.getIdLegal();
+            rowData[4] = jugador.getCat().getNom();
+            rowData[5] = false;
+            rowData[6] = false;
+
+            model.addRow(rowData);
+        }
     }
+
 
     if (taulaJugadors.getColumnModel().getColumnCount() > 0) {
         taulaJugadors.getColumnModel().getColumn(0).setMinWidth(0);
@@ -157,6 +171,26 @@ public class AfegirJugadorsEquip_JPanel extends JPanel{
         taulaJugadors.getColumnModel().getColumn(0).setWidth(0);
     }
 }
+public ArrayList<Jugador> obtenerMiembrosSeleccionados(JTable tablaMiembros, HashMap<Integer, Jugador> mapaMiembros) {
+    ArrayList<Jugador> miembrosSeleccionados = new ArrayList<>();
+    TableModel modelo = tablaMiembros.getModel();
+    for (int i = 0; i < modelo.getRowCount(); i++) {
+        Boolean seleccionado = (Boolean) modelo.getValueAt(i, 6);
+        if (Boolean.TRUE.equals(seleccionado)) {
+            Object idObj = modelo.getValueAt(i, 0);
+            if (idObj instanceof Integer) {
+                Integer idMiembro = (Integer) idObj;
+                if (mapaMiembros.containsKey(idMiembro)) {
+                    miembrosSeleccionados.add(mapaMiembros.get(idMiembro));
+                }
+            }
+        }
+    }
+
+    return miembrosSeleccionados;
+}
+
+
 
    
 }

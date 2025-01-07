@@ -1,7 +1,12 @@
 package Vista;
 
+import david.milaifontanals.org.Categoria;
+import david.milaifontanals.org.Temporada;
 import javax.swing.*;
 import java.awt.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CreaEquip_JPanel extends JPanel {
     JLabel titol, nom, temporada, categoria;
@@ -10,6 +15,8 @@ public class CreaEquip_JPanel extends JPanel {
     JButton guarda, torna;
     JRadioButton masc, fem, mix;
     ButtonGroup grup;
+    private boolean esEdicion;
+    
 
     public CreaEquip_JPanel() {
         setLayout(new GridBagLayout());
@@ -47,7 +54,7 @@ public class CreaEquip_JPanel extends JPanel {
         gbc.gridy = 2;
         add(temporada, gbc);
 
-        temporades = new JComboBox<>(new String[]{"2021", "2022", "2023", "2024"});
+        temporades = new JComboBox<>();
         temporades.setFont(new Font("Arial", Font.PLAIN, 16));
         gbc.gridx = 1;
         gbc.gridy = 2;
@@ -85,8 +92,8 @@ public class CreaEquip_JPanel extends JPanel {
         gbc.gridwidth = 2;
         add(radioPanel, gbc);
 
-        guarda = new JButton("Guardar");
-        torna = new JButton("Volver");
+        guarda = new JButton("Desa");
+        torna = new JButton("Torna");
         guarda.setFont(new Font("Arial", Font.BOLD, 16));
         torna.setFont(new Font("Arial", Font.BOLD, 16));
 
@@ -107,5 +114,67 @@ public class CreaEquip_JPanel extends JPanel {
         gbc.gridwidth = 2;
         gbc.weighty = 0.3; 
         add(buttonPanel, gbc);
+    }
+    public void cargarCategorias(HashMap<Integer, Categoria> categorias) {
+    categories.removeAllItems(); 
+    categorias.forEach((id, categoria) -> {
+        categories.addItem(categoria.getNom());
+    });
+}
+public void cargarTemporadas(ArrayList<Temporada> temporadas) {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
+    temporades.removeAllItems(); 
+    for (Temporada temporada : temporadas) {
+         temporades.addItem(sdf.format(temporada.getAnyIni()));
+    }
+}
+    public JComboBox<String> getCategories() {
+        return categories;
+    }
+
+    public JTextField getE_nom() {
+        return e_nom;
+    }
+
+    public JButton getGuarda() {
+        return guarda;
+    }
+
+    public JButton getTorna() {
+        return torna;
+    }
+
+    public JRadioButton getMasc() {
+        return masc;
+    }
+
+    public JRadioButton getFem() {
+        return fem;
+    }
+
+    public JRadioButton getMix() {
+        return mix;
+    }
+
+    public ButtonGroup getGrup() {
+        return grup;
+    }
+
+    public JComboBox<String> getTemporades() {
+        return temporades;
+    }
+     public void setModoEdicion(boolean esEdicion) {
+        this.esEdicion = esEdicion;
+        if (esEdicion) {
+            titol.setText("Edita Equip");
+            guarda.setText("Actualitza");
+        } else {
+            titol.setText("Crea Equip");
+            guarda.setText("Desa");
+        }
+    }
+    
+    public boolean isModoEdicion() {
+        return esEdicion;
     }
 }

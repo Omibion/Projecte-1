@@ -1,0 +1,34 @@
+Nom,Cognoms,Sexe,Data de naixement,NIF,IBAN,Data revisió médica,Adreça,Foto,Ciudad,Código Postal
+Pere,González,H,2016-01-01,12345678A,ES1234567890123456789012,2024-12-31,"Carrer del Sol, 10",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Joan,Martínez,H,2015-02-15,23456789B,ES1234567890123456789013,2024-12-31,"Carrer de la Pau, 12",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Ana,Moreno,D,2016-03-20,34567890C,ES1234567890123456789014,2024-12-31,"Carrer de la Llibertat, 7",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Lucía,López,D,2014-05-10,45678901D,ES1234567890123456789015,2024-12-31,"Carrer de la Rambla, 15",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Carlos,Rodríguez,H,2014-06-05,56789012E,ES1234567890123456789016,2024-12-31,"Carrer del Mar, 22",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+David,Pérez,H,2010-01-17,67890123F,ES1234567890123456789017,2024-12-31,"Carrer de la Marina, 30",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Eduardo,Gutiérrez,H,2013-03-10,78901234G,ES1234567890123456789018,2024-12-31,"Carrer de les Flors, 4",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+María,Álvarez,D,2012-08-15,89012345H,ES1234567890123456789019,2024-12-31,"Carrer de la Victòria, 18",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Carla,Fernández,D,2013-09-22,90123456I,ES1234567890123456789020,2024-12-31,"Carrer de la Mercè, 21",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Ricard,García,H,2007-09-10,23456789J,ES1234567890123456789021,2024-12-31,"Carrer de l'Esperança, 33",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Laura,Serrano,D,2014-05-28,23456789K,ES1234567890123456789022,2024-12-31,"Carrer de la Pau, 45",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Sergi,Moreno,H,2005-06-30,12345678J,ES1234567890123456789023,2024-12-31,"Carrer de la Riera, 8",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Nerea,Jiménez,D,2014-10-18,78901234J,ES1234567890123456789024,2024-12-31,"Carrer del Mar, 17",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Tomás,López,H,2006-06-07,67890123J,ES1234567890123456789025,2024-12-31,"Carrer de la Mercè, 21",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Laura,Fernández,D,2005-02-22,23456789A,ES1234567890123456789041,2024-12-31,"Carrer de l'Avinguda, 10",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Marta,Serrano,D,2004-11-11,34567890B,ES1234567890123456789042,2024-12-31,"Carrer de la Rambla, 21",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Sergio,Gómez,H,2005-03-03,45678901B,ES1234567890123456789043,2024-12-31,"Carrer de la Pau, 4",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Ana,Ruiz,D,2007-07-12,56789012C,ES1234567890123456789044,2024-12-31,"Carrer del Sol, 50",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Jorge,Ramírez,H,2004-09-09,67890123C,ES1234567890123456789045,2024-12-31,"Carrer de la Llibertat, 19",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Isabel,Martínez,D,2006-05-30,78901234D,ES1234567890123456789046,2024-12-31,"Carrer de la Pau, 70",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Carlos,Martínez,H,2006-01-25,89012345C,ES1234567890123456789047,2024-12-31,"Carrer de la Gràcia, 14",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Carla,Torres,D,2004-04-11,12345678D,ES1234567890123456789048,2024-12-31,"Carrer del Mar, 8",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Luis,Jiménez,H,2007-08-21,23456789D,ES1234567890123456789049,2024-12-31,"Carrer de la Llibertat, 60",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Raquel,Pérez,D,2005-12-15,34567890D,ES1234567890123456789050,2024-12-31,"Carrer del Sol, 30",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Fernando,Moreno,H,2006-02-18,45678901D,ES1234567890123456789051,2024-12-31,"Carrer de la Pau, 5",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Sara,García,D,2006-07-12,56789012E,ES1234567890123456789052,2024-12-31,"Carrer de la Rambla, 16",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Pedro,Díaz,H,2007-04-14,67890123E,ES1234567890123456789053,2024-12-31,"Carrer de la Costa, 5",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Elena,López,D,2004-06-04,78901234F,ES1234567890123456789054,2024-12-31,"Carrer de l'Avinguda, 19",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Carlos,Vega,H,2007-10-01,89012345E,ES1234567890123456789055,2024-12-31,"Carrer del Mar, 20",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+Carmen,Álvarez,D,2004-08-24,90123456F,ES1234567890123456789056,2024-12-31,"Carrer de la Mercè, 12",C:\\Users\\isard\\Desktop\\IMG\\Captura.PNG,null,null
+David,Holgado,H,1995-10-06,47116619S,ES5512345698798745632156,2024-10-06,B/St.Nicolau,/img/placeholder-male.jpg,null,null
+David,Holgado,H,1995-10-06,47116619S,ES4412365478998745632145,2024-10-06,B/St.nicolau,/img/placeholder-male.jpg,null,null
+DAvid,Holgado,H,1995-10-06,47116619S,ES5512365478998745632145,2024-10-06,jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj,/img/placeholder-male.jpg,null,null

@@ -33,6 +33,7 @@ public class conexio_BBDD implements Interficie_persistencia{
             private PreparedStatement psAfegirEquip;
             private PreparedStatement psAfegirMembre;
             private PreparedStatement psAfegirTemporada;
+            private PreparedStatement psAfegirJugador;
             private PreparedStatement psObtenirUsuari;
             private PreparedStatement psObtenirCategoria;
             private PreparedStatement psObtenirEquip;
@@ -54,10 +55,11 @@ public class conexio_BBDD implements Interficie_persistencia{
             private PreparedStatement psCarregarJugadors;
             private PreparedStatement psCarregarTemporades;
             private PreparedStatement psCarregarMembres;
-            
+            private PreparedStatement psObtenirMembrePerJugador;
+             private PreparedStatement psObtenirUltimJugador;
             
         public conexio_BBDD() throws gestorEquipsException{
-        this.hmcat = new HashMap<>();
+       
         String nomFitxer = "conexioBBDD.properties";
         Properties props = new Properties();
         try {
@@ -190,10 +192,39 @@ public boolean afegir_usuari(String nom, String password, String Loggin) throws 
         }
         return true;
     }
+            @Override
+        public boolean afegir_jugador(String nom, String cognoms, char sexe,Date data_naix,String id_legal,String iban,Date any_revisio,String adreça,String poblacio,String codiPostal,String foto) throws gestorEquipsException{
+                try {
+                    String tp = Character.toString(sexe);
+                    psAfegirJugador=con.prepareStatement("INSERT INTO jugador (nom,cognoms,sexe,data_naix,idlegal,iban,any_fi_revisió_médica,adreça,població,CodiPostal,foto) VALUES(?,?,?,?,?,?,?,?,?,?,?)");
+                    psAfegirJugador.setString(1, nom);
+                    psAfegirJugador.setString(2, cognoms);
+                    psAfegirJugador.setString(3, tp);
+                    psAfegirJugador.setDate(4, data_naix);
+                    psAfegirJugador.setString(5, id_legal);
+                    psAfegirJugador.setString(6, iban);
+                    psAfegirJugador.setDate(7, any_revisio);
+                    psAfegirJugador.setString(8, adreça);
+                    psAfegirJugador.setString(9, poblacio);
+                    psAfegirJugador.setString(10, codiPostal);
+                    psAfegirJugador.setString(11, foto);
+                } catch (SQLException ex) {
+                    throw new gestorEquipsException("Error al preparar statement per inserir jugador",ex);
+                }
+                try {
+                    
+                    if(psAfegirJugador.executeUpdate()!=1)
+                        return false;
+                } catch (SQLException ex) {
+                    throw new gestorEquipsException("Error al executar query per inserir jugador",ex);
+                }
+            return true;
+        }
+
 
     @Override
     public boolean afegir_equip(String nom, char tipus, int idcat, int idtemp) throws gestorEquipsException {
-        if(psAfegirEquip==null){
+      
             try {
                 psAfegirEquip=con.prepareStatement("INSERT INTO equip(nom,tipus,id_cat,temporada) VALUES (?,?,?,?)");
             } catch (SQLException ex) {
@@ -211,22 +242,22 @@ public boolean afegir_usuari(String nom, String password, String Loggin) throws 
             } catch (SQLException ex) {
                 throw new gestorEquipsException("Error al inserir equip",ex);
             }
-        }
+        
         return true;
     }
 
     @Override
-    public boolean afegir_membre(int jug, int cat, char tit) throws gestorEquipsException {
-        if(psAfegirMembre==null){
+    public boolean afegir_membre(int jug, int eqp, char tit) throws gestorEquipsException {
+        
             try {
-                psAfegirMembre= con.prepareStatement("INSERT INTO membre VALUES (?,?)");
+                psAfegirMembre= con.prepareStatement("INSERT INTO membre(id_jugador,id_equip,titular) VALUES (?,?,?)");
             } catch (SQLException ex) {
                 throw new gestorEquipsException("Error en preparar el statement per afegir membres",ex);
             }
             try {
                 String tt= Character.toString(tit);
                 psAfegirMembre.setInt(1, jug);
-                psAfegirMembre.setInt(2, cat);
+                psAfegirMembre.setInt(2, eqp);
                 psAfegirMembre.setString(3,tt);
                 if(psAfegirMembre.executeUpdate()!=1){
                     return false;
@@ -234,7 +265,7 @@ public boolean afegir_usuari(String nom, String password, String Loggin) throws 
             } catch (SQLException ex) {
                  throw new gestorEquipsException("Error al inserir membre",ex);
             }
-        }
+        
         
         return true;
     }
@@ -337,7 +368,7 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
         if(eqp!=null){
             return eqp;
         }
-        if(psObtenirEquip==null){
+       
             try {
                 psObtenirEquip=con.prepareStatement("select * from equip where id = ?");
             } catch (SQLException ex) {
@@ -368,7 +399,7 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
             }
            
             
-        }
+        
         return eqp;
     }
    
@@ -379,9 +410,9 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
         if(mem!=null){
             return mem;
         }
-        if(psObtenirMem==null){
+       
             try {
-                psObtenirMem=con.prepareStatement("select * from membre where idjugador = ? and idequip =?");
+                psObtenirMem=con.prepareStatement("select * from membre where id_jugador = ? and id_equip =?");
             } catch (SQLException ex) {
                 throw new gestorEquipsException("Error en preparar el statement per recuperar equips",ex);
             }
@@ -407,11 +438,11 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
                 mem=new Membre(jug,eq,tit);
                  }
             } catch (SQLException ex) {
-                throw new gestorEquipsException("Error en executar la query per carregar categoria",ex);
+                throw new gestorEquipsException("Error en executar la query per carregar membre",ex);
             }
            
             
-        }
+        
         return mem;
     }
 
@@ -421,7 +452,7 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
         if(jug!=null){
             return jug;
         }
-        if(psObtenirJugador==null){
+        
             try {
                 psObtenirJugador=con.prepareStatement("select * from jugador where id = ?");
             } catch (SQLException ex) {
@@ -440,17 +471,19 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
                 String iban = rs.getString("IBAN");
                 Date anyRev=rs.getDate("ANY_FI_REVISIÓ_MÉDICA");
                 String Adreça=rs.getString("adreça");
+                String poblacio=rs.getString("població");
+                String cp=rs.getString("CodiPostal");
                 String url = rs.getString("foto");
                 
                 char sex= sexe.charAt(0);
-                jug=new Jugador(idj,nom,cognom,sex,dataNaix,dni,iban,anyRev,Adreça,url);
+                jug=new Jugador(idj,nom,cognom,sex,dataNaix,dni,iban,anyRev,Adreça,url,poblacio,cp);
                  }
             } catch (SQLException ex) {
                 throw new gestorEquipsException("Error en executar la query per carregar categoria",ex);
             }
            
             
-        }
+        
         return jug;
     }
    
@@ -553,13 +586,13 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
             }}
             try {
                 psUpdateEquip.setString(1, eq.getNomEquip());
-                psUpdateEquip.setInt(2, eq.getTipus());
+                psUpdateEquip.setString(2, String.valueOf(eq.getTipus()).trim().substring(0, 1));
                 psUpdateEquip.setInt(3, eq.getCat().getId());
-                psUpdateEquip.setInt(3, eq.getIdEq());
+                psUpdateEquip.setInt(4, eq.getIdEq());
                 psUpdateEquip.executeUpdate();
                 return true;
             } catch (SQLException ex) {
-                throw new gestorEquipsException("Error en executar la query per actualitzar categories",ex);
+                throw new gestorEquipsException("Error en executar la query per actualitzar equip",ex);
             }
         
     }
@@ -567,12 +600,12 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
 
     @Override
     public boolean editar_membre(Membre mem) throws gestorEquipsException {
-            if(psUpdateMembre==null){
+          
             try {
                 psUpdateMembre=con.prepareStatement("Update membre set titular=? where id_jugador =? and id_equip=?");
             } catch (SQLException ex) {
                 throw new gestorEquipsException("Error en preparar el statement per canviar equips",ex); 
-            }}
+            }
             try {
                 psUpdateMembre.setString(1, String.valueOf(mem.getTitular()));
                 psUpdateMembre.setInt(2, mem.getJug().getId());
@@ -581,7 +614,7 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
                 psUpdateMembre.executeUpdate();
                 return true;
             } catch (SQLException ex) {
-                throw new gestorEquipsException("Error en executar la query per actualitzar categories",ex);
+                throw new gestorEquipsException("Error en executar la query per actualitzar membres",ex);
             }
         
     }
@@ -590,7 +623,7 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
     public boolean editar_jugador(Jugador jug) throws gestorEquipsException{
         if(psUpdateJugador==null){
             try {
-                psUpdateJugador=con.prepareStatement("Update jugador set nom=?,cognoms=?,sexe=?,data_naix=?,idlegal=?,iban=?,any_fi_revisió_medica=?, adreça=?,foto=? where id=?");
+                psUpdateJugador=con.prepareStatement("Update jugador set nom=?,cognoms=?,sexe=?,data_naix=?,idlegal=?,iban=?,any_fi_revisió_medica=?, adreça=?,foto=?,població=?,CodiPostal=? where id=?");
             } catch (SQLException ex) {
                 throw new gestorEquipsException("Error en preparar el statement per canviar jugadors",ex); 
             }}
@@ -691,14 +724,14 @@ public usuari obtenir_usuari(String loggin) throws gestorEquipsException {
 
     @Override 
     public boolean eliminar_membre(Membre mem) throws gestorEquipsException {
-        if(psEliminarMembre==null){
+      
             try {
                 psEliminarMembre=con.prepareStatement("delete from membre where id_equip = ? and id_jugador = ?");
             } catch (SQLException ex) {
                 throw new gestorEquipsException("Error en preparar el statement per eliminar membres",ex);
             }
             
-        }
+        
                 try {
                     psEliminarMembre.setInt(1, mem.getEq().idEq);
                     psEliminarMembre.setInt(2,mem.getJug().getId());
@@ -773,28 +806,32 @@ public boolean eliminar_temporada(Temporada temp) throws gestorEquipsException {
         }
     }
 
-    @Override
-    public boolean eliminar_jugador(Jugador jug) throws gestorEquipsException {
-        if(psEliminarJugador==null){
-            try {
-                psEliminarJugador=con.prepareStatement("delete from membre where id = ?");
-            } catch (SQLException ex) {
-                throw new gestorEquipsException("Error en preparar el statement per eliminar jugadors",ex);
-            }
-            
+@Override
+public boolean eliminar_jugador(Jugador jug) throws gestorEquipsException {
+    String sql = "DELETE FROM jugador WHERE id = ?";
+    
+    try (PreparedStatement psEliminarJugador = con.prepareStatement(sql)) {
+        psEliminarJugador.setInt(1, jug.getId());
+        int filasAfectadas = psEliminarJugador.executeUpdate();
+        
+        if (filasAfectadas == 0) {
+            throw new gestorEquipsException("No se pudo eliminar el jugador con ID: " + jug.getId() + ". Es posible que no exista en la base de datos.");
         }
-                try {
-                    psEliminarJugador.setInt(1, jug.getId());
-                    psEliminarJugador.executeUpdate();
-                    return true;
-                } catch (SQLException ex) {
-                    throw new gestorEquipsException("Error en preparar el statement per eliminar jugadors",ex);
-                }    
+        
+        System.out.println("Jugador con ID " + jug.getId() + " eliminado correctamente.");
+        return true;
+    } catch (SQLIntegrityConstraintViolationException ex) {
+        throw new gestorEquipsException("No se puede eliminar el jugador con ID: " + jug.getId() + " debido a restricciones de clave foránea.", ex);
+    } catch (SQLException ex) {
+        throw new gestorEquipsException("Error SQL al intentar eliminar el jugador con ID: " + jug.getId() + ". SQLState: " + ex.getSQLState() + ", ErrorCode: " + ex.getErrorCode(), ex);
     }
+}
+
+
 
   @Override
 public HashMap<Integer,Categoria> carregar_categories() throws gestorEquipsException {
-    
+    this.hmcat=new HashMap<>();
 
     try {
         psObtenirCategoria = con.prepareStatement("SELECT * FROM categoria");
@@ -862,17 +899,18 @@ public HashMap<Integer,Categoria> carregar_categories() throws gestorEquipsExcep
         
         return hmjug;
     }
+            @Override
     public ArrayList<Temporada> carregar_temporades() throws gestorEquipsException {
     ArrayList<Temporada> listaTemporadas = new ArrayList<>();
     ResultSet rs = null;
     
-    if (psCarregarTemporades == null) {
+    
         try {
             psCarregarTemporades = con.prepareStatement("SELECT * FROM temporada");
         } catch (SQLException ex) {
             throw new gestorEquipsException("Error al crear el prepared statement", ex);
         }
-    }
+    
     try {
         rs = psCarregarTemporades.executeQuery();
         while (rs.next()) {
@@ -931,7 +969,8 @@ public HashMap<Integer, Equip> carregar_equips() throws gestorEquipsException {
 
     return hmeqp;
 }
-public HashMap<String, Membre> carregar_membres() throws gestorEquipsException {
+            @Override
+            public HashMap<String, Membre> carregar_membres() throws gestorEquipsException {
     hmmem.clear(); 
     Membre mem = null;
 
@@ -961,7 +1000,44 @@ public HashMap<String, Membre> carregar_membres() throws gestorEquipsException {
     }
     return hmmem;
 }
+             @Override
+    public ArrayList <Membre> obtenir_membre_per_jugador(int idjuga)throws gestorEquipsException{
+        ArrayList <Membre> mem = new ArrayList();
+                try {
+                    psObtenirMembrePerJugador=con.prepareStatement("SELECT * FROM MEMBRE WHERE ID_JUGADOR = ?");
+                     psObtenirMembrePerJugador.setInt(1, idjuga);
+                    ResultSet rs=psObtenirMembrePerJugador.executeQuery();
+                    while(rs.next()){
+                        int idEquip=rs.getInt("id_equip");
+                        Membre membre=obtenir_membre(idjuga,idEquip);
+                        mem.add(membre);
+                    }
+                    psObtenirMembrePerJugador.close();
+                } catch (Exception ex) {
+                    throw new gestorEquipsException("Error: ", ex);
+                } 
+        return mem;
+    }
 
+            @Override
+    public int obtenir_ultim_jugador()throws gestorEquipsException{
+        ResultSet rs;
+        int idjug=-1;
+                try {
+                    psObtenirUltimJugador=con.prepareStatement("SELECT id FROM JUGADOR",ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+                } catch (SQLException ex) {
+                     throw new gestorEquipsException("Error: ", ex);
+                }
+                try {
+                    rs=psObtenirUltimJugador.executeQuery();
+                    if(rs.last()){
+                        idjug=rs.getInt("id");
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(conexio_BBDD.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                return idjug;
+    }
     @Override
     public void commit() throws gestorEquipsException {
                 try {

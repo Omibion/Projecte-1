@@ -90,7 +90,7 @@ public class Temporades_JPanel extends JPanel {
         gbc.gridy = 5; 
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 0.3;
-        gbc.insets = new Insets(10, 10, 20, 10); // Agregar un poco de margen en la parte inferior
+        gbc.insets = new Insets(10, 10, 20, 10);
         this.add(desarButton, gbc);
     }
 
@@ -137,23 +137,22 @@ public class Temporades_JPanel extends JPanel {
 public ArrayList<Temporada> getTemporadasSeleccionadas(ArrayList<Temporada> listaTemporadas) {
     ArrayList<Temporada> temporadasSeleccionadas = new ArrayList<>();
     DefaultTableModel model = (DefaultTableModel) tablaTemporadas.getModel();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // Definir el formato de fecha esperado
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); 
 
-    // Iteramos sobre todas las filas de la tabla
+ 
     for (int row = 0; row < model.getRowCount(); row++) {
-        Boolean selected = (Boolean) model.getValueAt(row, 1);  // Suponiendo que la columna 1 es la casilla de selección
+        Boolean selected = (Boolean) model.getValueAt(row, 1);  
         if (selected != null && selected) {
-            // Obtenemos los valores correspondientes a cada columna de la fila seleccionada
-            String anyPeriodoStr = (String) model.getValueAt(row, 0);  // Suponiendo que la columna 0 es el periodo (como 'yyyy-yy')
+          
+            String anyPeriodoStr = (String) model.getValueAt(row, 0);  
 
-            // Buscamos la temporada en la lista con el periodo correspondiente
             for (Temporada temporada : listaTemporadas) {
                 String periodo = new SimpleDateFormat("yy").format(temporada.getAnyIni()) + "-" + 
                                  new SimpleDateFormat("yy").format(temporada.getAnyFi());
 
                 if (anyPeriodoStr.equals(periodo)) {
                     temporadasSeleccionadas.add(temporada);
-                    break; // 
+                    break; 
                 }
             }
         }

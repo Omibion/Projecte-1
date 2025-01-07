@@ -9,7 +9,7 @@ package david.milaifontanals.org;
  * @author isard
  */
 public class usuari {
-    //Falta encriptar la contraseña en el constructor
+  
     String login;
     String nomUsuari;
     String contrasenya;

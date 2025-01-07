@@ -11,7 +11,7 @@ import javax.swing.*;
  * @author isard
  */
 public class FRameLoggin extends JFrame {
-    // Declarar componentes como variables de instancia
+   
     private JLabel usu;
     private JLabel cont;
     private JTextField usuari;

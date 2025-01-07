@@ -25,6 +25,8 @@ public interface Interficie_persistencia {
     
     public boolean afegir_temporada(Date anyini, Date anyfi) throws gestorEquipsException; 
     
+    public boolean afegir_jugador(String nom, String cognoms, char sexe,Date data_naix,String id_legal,String iban,Date any_revisio,String adreça,String poblacio,String codiPostal,String foto) throws gestorEquipsException;
+    
     public usuari obtenir_usuari(String loggin) throws gestorEquipsException; 
     
     public Categoria obtenir_categoria(int id) throws gestorEquipsException;
@@ -76,6 +78,9 @@ public interface Interficie_persistencia {
     
     public HashMap<String, Membre> carregar_membres() throws gestorEquipsException;
     
+    public ArrayList <Membre> obtenir_membre_per_jugador(int idjuga)throws gestorEquipsException;
+    
     public void commit() throws gestorEquipsException ;
 
+    public int obtenir_ultim_jugador()throws gestorEquipsException;
 }  

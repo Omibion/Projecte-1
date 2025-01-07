@@ -26,6 +26,8 @@ public class Jugador {
     String adreça;
     String foto;
     Categoria cat;
+    String ciutat;
+    String cp;
 
     public Jugador(int id, String nom, String cognoms, char sexe, Date dataNaix, String idLegal, String iban, Date anyFiRevisioMedica, String adreça, String foto) {
         this.id = id;
@@ -53,6 +55,24 @@ public class Jugador {
         this.adreça = adreça;
         this.foto = foto;
     }
+
+    public Jugador(int id, String nomJugador, String cognoms, char sexe, Date dataNaix, String idLegal, String iban, Date anyFiRevisioMedica, String adreça, String foto, String ciutat, String cp) {
+        this.id = id;
+        this.nomJugador = nomJugador;
+        this.cognoms = cognoms;
+        this.sexe = sexe;
+        this.dataNaix = dataNaix;
+        this.idLegal = idLegal;
+        this.iban = iban;
+        this.anyFiRevisioMedica = anyFiRevisioMedica;
+        this.adreça = adreça;
+        this.foto = foto;
+        this.cat = cat;
+        this.ciutat = ciutat;
+        this.cp = cp;
+    }
+    
+    
 
     public int getId() {
         return id;
@@ -141,6 +161,24 @@ public class Jugador {
     public void setCat(Categoria cat) {
         this.cat = cat;
     }
+
+    public String getCiutat() {
+        return ciutat;
+    }
+
+    public void setCiutat(String ciutat) {
+        this.ciutat = ciutat;
+    }
+
+    public String getCp() {
+        return cp;
+    }
+
+    public void setCp(String cp) {
+        this.cp = cp;
+    }
+    
+    
     public int calcularEdad(Date fechaNacimiento) {
     Calendar fechaActual = Calendar.getInstance();
     Calendar fechaNac = Calendar.getInstance();

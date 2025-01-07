@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 public class Jugadors_JPanel extends JPanel {
     private JTable taulaJugadors;
-    private JButton esborraSeleccionat, afegirJugador, exportarJugadors;
+    private JButton esborraSeleccionat, afegirJugador, exportarJugadors,desa;
     private JTextField nifField, nombreField, fechaField;
     private JButton cercaButton, cercaPorNomButton, cercaPorFechaButton, cercaPorCategoriaButton;
     private DefaultTableModel model;
@@ -48,20 +48,25 @@ public class Jugadors_JPanel extends JPanel {
     topPanel.add(cercaPorCategoriaButton);
     
     add(topPanel, BorderLayout.NORTH);
-    String[] columnNames = {"Nom", "NIF", "Data de naixement", "Categoria", "Seleccionat"};
+    String[] columnNames = {"Nom", "NIF", "Data de naixement", "Categoria", "Seleccionat","idjug"};
     model = new DefaultTableModel(columnNames, 0);
     taulaJugadors = new JTable(model) {
     @Override
     public Class<?> getColumnClass(int column) {
-        return column == 4 ? Boolean.class : String.class; // La columna 4 es de tipo Boolean, el resto es String
+        return column == 4 ? Boolean.class : String.class; 
     }
 
     @Override
     public boolean isCellEditable(int row, int column) {
-        return false; // Ninguna celda será editable
+        return column == 4; 
     }
+    
 };
-
+taulaJugadors.getColumnModel().getColumn(5).setMinWidth(0);
+taulaJugadors.getColumnModel().getColumn(5).setMaxWidth(0);
+taulaJugadors.getColumnModel().getColumn(5).setWidth(0);
+taulaJugadors.getColumnModel().getColumn(5).setPreferredWidth(0);
+taulaJugadors.getColumnModel().getColumn(5).setResizable(false);
     taulaJugadors.setRowHeight(30); 
    
     JScrollPane scrollPane = new JScrollPane(taulaJugadors);
@@ -76,20 +81,23 @@ public class Jugadors_JPanel extends JPanel {
     add(bottomPanel, BorderLayout.SOUTH);
 }
     public void actualizarTabla(HashMap<Integer, Jugador> jugadores, HashMap<Integer, Categoria> cat) {
-        model.setRowCount(0);
+    model.setRowCount(0);
 
-        jugadores.forEach((key, jugador) -> {
-            jugador.asignarCategoria(cat);
+    jugadores.forEach((key, jugador) -> {
+        jugador.asignarCategoria(cat);
 
-            Object[] rowData = new Object[5];
-            rowData[0] = jugador.getNomJugador();
-            rowData[1] = jugador.getIdLegal();
-            rowData[2] = jugador.getDataNaix();
-            rowData[3] = jugador.getCat() != null ? jugador.getCat().getNom() : "No asignada";
-            rowData[4] = Boolean.FALSE;
-            model.addRow(rowData);
-        });
-    }
+        Object[] rowData = new Object[6];
+        rowData[0] = jugador.getNomJugador();
+        rowData[1] = jugador.getIdLegal();
+        rowData[2] = jugador.getDataNaix();
+        rowData[3] = jugador.getCat() != null ? jugador.getCat().getNom() : "No asignada";
+        rowData[4] = Boolean.FALSE;
+        rowData[5] = jugador.getId();
+
+        model.addRow(rowData);
+    });
+}
+
 
 public void cargarCategorias(HashMap<Integer, Categoria> categorias) {
     categoriaComboBox.removeAllItems(); 
@@ -125,7 +133,7 @@ public void cargarCategorias(HashMap<Integer, Categoria> categorias) {
             
             actualizarTabla(jugadoresFiltrados, new HashMap<>());
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Formato de fecha no válido.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Formatde data no vàlid.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -142,6 +150,22 @@ public void cargarCategorias(HashMap<Integer, Categoria> categorias) {
         actualizarTabla(jugadoresFiltrados, new HashMap<>());
     }
 
+    public ArrayList<Jugador> obtenirSeleccionats(HashMap <Integer, Jugador> hmjug) {
+    ArrayList<Jugador> seleccionats = new ArrayList<>();
+    for (int i = 0; i < model.getRowCount(); i++) {
+        Boolean seleccionat = (Boolean) model.getValueAt(i, 4);
+        if (Boolean.TRUE.equals(seleccionat)) {
+            int idJug = (int) model.getValueAt(i, 5);
+
+            Jugador jugador = hmjug.get(idJug);
+            if (jugador != null) {
+                seleccionats.add(jugador);
+            }
+        }
+    }
+
+    return seleccionats;
+}
 
     public JButton getCercaPerNomButton() {
         return cercaPorNomButton;

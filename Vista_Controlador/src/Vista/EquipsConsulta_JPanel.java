@@ -12,9 +12,9 @@ import vista_controlador.Vista_Controlador;
 public class EquipsConsulta_JPanel extends JPanel {
     JTable taulaEquips;
     JButton CreaEquips;
-    JButton EditaEquip;
+
     JButton BorraEquip;
-    JButton Desa;  // Nuevo botón
+    JButton Desa;  
     JButton Cerca;
     JComboBox<String> Temporada;
     JComboBox<String> Categoria;
@@ -57,20 +57,18 @@ public class EquipsConsulta_JPanel extends JPanel {
         gbc.fill = GridBagConstraints.HORIZONTAL; 
 
         CreaEquips = new JButton("Crear Equip");
-        EditaEquip = new JButton("Editar Equip");
         BorraEquip = new JButton("Borrar Equip");
-        Desa = new JButton("Desa");  // Crear el botón Desa
+        Desa = new JButton("Desa"); 
         gbc.gridx = 0;
         gbc.weightx = 1.0;  
         bottomPanel.add(CreaEquips, gbc);
 
-        gbc.gridx = 1;
-        bottomPanel.add(EditaEquip, gbc);
+      
 
-        gbc.gridx = 2;
+        gbc.gridx = 1;
         bottomPanel.add(BorraEquip, gbc);
 
-        gbc.gridx = 3;
+        gbc.gridx = 2;
         bottomPanel.add(Desa, gbc);  
 
         add(bottomPanel, BorderLayout.SOUTH);
@@ -91,8 +89,6 @@ public class EquipsConsulta_JPanel extends JPanel {
         return (int) model.getValueAt(filaSeleccionada, 0);
     }
  
-
-    // Métodos getters
     public JComboBox<String> getTemporada() {
         return Temporada;
     }
@@ -103,10 +99,6 @@ public class EquipsConsulta_JPanel extends JPanel {
 
     public JButton getCreaEquips() {
         return CreaEquips;
-    }
-
-    public JButton getEditaEquip() {
-        return EditaEquip;
     }
 
     public JButton getBorraEquip() {
